@@ -55,31 +55,29 @@ public class ImageLoader {
     public ArrayList<ArrayList<Integer>> getColors(){ 
         
         ArrayList<ArrayList<Integer>> colors = new ArrayList<ArrayList<Integer>>();
-        ArrayList<Integer>rgbComponents=new ArrayList<Integer>(); 
-        int imageRGB,r,g,b;
                 
-        for(int x=0;x<32;x++){  //Dura n
-            
-            for(int y=0;y<32;y++){  //Dura n
+        for(int x=0;x<16;x++){  //Dura n
+            int imageRGB;
+            for(int y=0;y<16;y++){  //Dura n
                //Brings out RGB int value 
-               rgbComponents.clear();
                imageRGB =loadedImage.getRGB(x,y);
                
                //Decomposition of the int into its RGB components
-               r = (imageRGB & 0xff0000) >> 16;
-               g = (imageRGB & 0xff00) >> 8;
-               b = imageRGB & 0xff;
+                int a = (imageRGB &0xff000000) >> 24;
+                int r = (imageRGB & 0xff0000) >> 16;
+                int g = (imageRGB & 0xff00) >> 8;
+                int b = imageRGB & 0xff;
+               ArrayList<Integer>rgbComponents=new ArrayList<Integer>(); 
+               //Adds those components int the rgbComponents ArrayList    
                
-               //Adds those components int the rgbComponents ArrayList           
                rgbComponents.add(r);
                rgbComponents.add(g);
                rgbComponents.add(b);
-               System.out.println("Added "+rgbComponents.size()+" elements.");
                //Adds the previous array into the final array
-               System.out.println("Adding "+rgbComponents.toString());
+               //System.out.println("Pixel <"+x+","+y+">"+rgbComponents.toString()+" "+(new ColorUtils().getColorNameFromRgb(r, g, b)));
                colors.add(rgbComponents);
                
-               //Clean rgbComponents, for the next pixel components
+               
 
             }
         }
@@ -97,15 +95,75 @@ public class ImageLoader {
         int imageRGB =loadedImage.getRGB(x,y);
         
         //Decomposition of the int into its RGB components
-        int r = (imageRGB & 0xff0000) >> 16;
-        int g = (imageRGB & 0xff00) >> 8;
+        int a = (imageRGB >> 24) & 0xff;
+        int r = (imageRGB >> 16) & 0xff;
+        int g = (imageRGB >> 8) & 0xff;
         int b = imageRGB & 0xff;
                
         //Adds those components int the rgbComponents ArrayList           
+        rgbComponents.add(a);
         rgbComponents.add(r);
         rgbComponents.add(g);
         rgbComponents.add(b);
         
         return rgbComponents;
     }
+    /**
+     * Retorna la imagen cargada pero en escala de grises
+     * @return BufferedImage 
+     */
+    public BufferedImage ImageToGrayscale(BufferedImage imagen){
+        BufferedImage grayImg = new BufferedImage(imagen.getWidth(),imagen.getHeight(),BufferedImage.TYPE_INT_ARGB);
+        for(int x=0;x<this.loadedImage.getWidth();x++){
+            for(int y=0;y<this.loadedImage.getHeight();y++){
+                ArrayList<Integer> argbComponents=this.getColorFromPixel(x, y);
+                
+                int a = argbComponents.get(0);
+                int r = argbComponents.get(1);
+                int g = argbComponents.get(2);
+                int b = argbComponents.get(3);       
+                
+                int avg = (r+g+b)/3;
+                
+                int newPixel = (a<<24)|(avg<<16)|(avg<<8)|avg;
+                
+                grayImg.setRGB(x, y, newPixel);
+            }
+        }
+        return grayImg;
+    }
+    /**
+     * Funcion auxiliar que retorna un arreglo con los colores RGB de la image en escala de grises
+     * @param colors
+     * @return 
+     */
+    public ArrayList<ArrayList<Integer>> grayscaleRGB(){
+        BufferedImage grayscaleImg= this.ImageToGrayscale(this.loadedImage);
+        ArrayList<ArrayList<Integer>> colors = new ArrayList<ArrayList<Integer>>();
+                
+        for(int x=0;x<16;x++){  //Dura n
+            int imageRGB;
+            for(int y=0;y<16;y++){  //Dura n
+               //Brings out RGB int value 
+               imageRGB =grayscaleImg.getRGB(x,y);
+               
+               //Decomposition of the int into its RGB components
+                int a = (imageRGB &0xff000000) >> 24;
+                int r = (imageRGB & 0xff0000) >> 16;
+                int g = (imageRGB & 0xff00) >> 8;
+                int b = imageRGB & 0xff;
+               ArrayList<Integer>rgbComponents=new ArrayList<Integer>(); 
+               //Adds those components int the rgbComponents ArrayList    
+               
+               rgbComponents.add(r);
+               rgbComponents.add(g);
+               rgbComponents.add(b);
+               //Adds the previous array into the final array
+               //System.out.println("Pixel <"+x+","+y+">"+rgbComponents.toString()+" "+(new ColorUtils().getColorNameFromRgb(r, g, b)));
+               colors.add(rgbComponents);
+            }
+        }
+        return colors;
+    }
+
 }
