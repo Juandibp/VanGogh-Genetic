@@ -15,11 +15,24 @@ public class ImageLoader {
     public ImageLoader(String path){
         loadedImage = loadImage(path);
     }
+    
+    public ImageLoader(BufferedImage image){
+        this.loadedImage=image;
+    }
     /**
      * loadedImage attribute setter
      * @param path
      * @return 
      */
+    
+    public int getImageWidth(BufferedImage img){
+        return img.getWidth();
+    }
+    
+    public int getImageHeight(BufferedImage img){
+        return img.getHeight();
+    }
+    
     public BufferedImage loadImage(String path){
         try {
             BufferedImage retrievedImage = ImageIO.read(new File(path));

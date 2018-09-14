@@ -21,13 +21,13 @@ public class ImageGenerator {
      * @param imageNumber
      * @param imageGeneration 
      */
-    public static void generateImages(int imageNumber,int imageGeneration){
+    public static void generateImages(int imageNumber,int imageGeneration, int largo, int ancho){
         Random randint = new Random(System.currentTimeMillis());
         int r,g,b;
-        BufferedImage buffedImage=new BufferedImage(16,16,BufferedImage.TYPE_INT_RGB);
+        BufferedImage buffedImage=new BufferedImage(largo,ancho,BufferedImage.TYPE_INT_RGB);
         //System.out.println("Image: "+buffedImage.toString());
-        for(int x=0;x<16;x++){
-            for(int y=0;y<16;y++){
+        for(int x=0;x<largo;x++){
+            for(int y=0;y<ancho;y++){
                 
                 r=randint.nextInt(255);
                 g=randint.nextInt(255);
