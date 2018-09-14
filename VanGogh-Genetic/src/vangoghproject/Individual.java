@@ -5,10 +5,49 @@
  */
 package vangoghproject;
 
+import java.awt.Color;
+import java.awt.image.BufferedImage;
+import java.util.Random;
+
 /**
  *
  * @author juand
  */
 public class Individual {
+    int max;
+    Color[] p;
+    double health;
+    BufferedImage Target;
+
+    public Individual(BufferedImage Target) {
+        this.Target = Target;
+        this. max = Target.getWidth()*Target.getHeight();
+        this.p = new Color [max];
+        this.health=0;
+    }
+    
+    public void generateImage(){
+        for(int i=1; i<p.length;i++){
+            Random rand = new Random();
+            int r = rand.nextInt(256);
+            int g = rand.nextInt(256);
+            int b = rand.nextInt(256);
+            Color c = new Color(r,g,b);
+            p[i]=c;
+        }
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     
 }
