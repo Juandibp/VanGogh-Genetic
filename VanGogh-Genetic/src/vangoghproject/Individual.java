@@ -7,6 +7,7 @@ package vangoghproject;
 
 import java.awt.Color;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 import java.util.Random;
 
 /**
@@ -42,10 +43,15 @@ public class Individual extends VanGoghProject {
     }
     
     public void mutate(){
+        ArrayList<ArrayList<Integer>> TargetColors= getRGBComponents (Target);
         Random rand= new Random();
         for(int i=0;i<(int)rand.nextInt(11);i++){
             int r = (int)rand.nextInt(p.length+1);
-            p[r]= new Color(rand.nextInt(256),rand.nextInt(256),rand.nextInt(256));
+            int red= TargetColors.get(i).get(0);
+            int green= TargetColors.get(i).get(1);
+            int blue= TargetColors.get(i).get(2);
+            //p[r]= new Color(rand.nextInt(256),rand.nextInt(256),rand.nextInt(256));
+            p[r]= new Color(red,green,blue);
         }
     }
     

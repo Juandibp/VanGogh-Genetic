@@ -7,6 +7,9 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import javafx.util.Pair;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
@@ -57,44 +60,59 @@ public class VanGoghProject {
         }*/
     }
     
-    public static void test(BufferedImage goalImg){
+public static void test(BufferedImage goalImg){
         int value=0;
  
-            JFrame frame = new JFrame();
-            ImageIcon image = new ImageIcon(goalImg);
-            JLabel imageLabel = new JLabel(image);
-            frame.add(imageLabel);
-            frame.setLayout(null);
-            imageLabel.setLocation(0, 0);
-            imageLabel.setSize(1000, 750);
-            imageLabel.setVisible(true);
-            frame.setVisible(true);
-            frame.setSize(1000, 750);
-            frame.setDefaultCloseOperation(EXIT_ON_CLOSE);
-            
-            ImageLoader finalImg = new ImageLoader(goalImg);
-        
-            
+        /* JFrame frame = new JFrame();
+         ImageIcon image = new ImageIcon(goalImg);
+         JLabel imageLabel = new JLabel(image);
+         frame.add(imageLabel);
+         frame.setLayout(null);
+         imageLabel.setLocation(0, 0);
+         imageLabel.setSize(1000, 750);
+         imageLabel.setVisible(true);
+         frame.setVisible(true);
+         frame.setSize(1000, 750);
+         frame.setDefaultCloseOperation(EXIT_ON_CLOSE);*/
+
+        ImageLoader finalImg = new ImageLoader(goalImg);
+        //Arraylist de pares donde se van a guardar pares de String para el nombre de la imagen y un double donde va a estar la distancia Euclideana
+        ArrayList<Pair<String,Double>> ranking = new ArrayList<Pair<String,Double>>();
+
         for(int i =1;i<=MAX_NUM_IMGS;i++){
             ImageLoader chosenImg = new ImageLoader(resDirectory+"Image"+i+"Gen0.bmp");
             BufferedImage genImg = null;
             try {
                 genImg = ImageIO.read(new File(resDirectory+"Image"+i+"Gen0.bmp"));
-                    } catch (IOException e) {
-                System.out.println("Imagen no existe");
-                    }
-             
-            System.out.println("Testing goal image with "+"Image"+i);
-            System.out.println("Euclidean difference is: "+String.valueOf(euclidianDistance(goalImg,genImg)));
-            System.out.println("Remember 0 is perfect");
-            if (getEuclideanIndex(finalImg.getColors(),chosenImg.getColors())!=0){
-                value+=1;
-            }else{
-                continue;
-            }
+
+                Pair<String,Double> newEntry = new Pair<>("Image"+String.valueOf(i)+"Gen0.bmp",euclidianDistance(goalImg,genImg));
+                ranking.add(newEntry);
+                } catch (IOException e) {
+            System.out.println("Imagen no existe");
+                }
+            //System.out.println("Testing goal image with "+"Image"+i);
         }
-        System.out.println("Hay "+value+" imagen(es) que tienen indice diferente a cero.");
+        verRanking(ranking);
+
     }
+
+public static void verRanking(ArrayList<Pair<String,Double>> ranking){
+        Collections.sort(ranking,new Comparator<Pair<String,Double>>(){
+           @Override
+           public int compare(Pair<String,Double > o1,Pair<String,Double> o2){
+                if (o1.getValue() > o2.getValue()) {
+                    return -1;
+                } else if (o1.getValue().equals(o2.getValue())) {
+                    return 0;
+                } else {
+                    return 1;
+                }
+           }
+        });
+        System.out.println(ranking.toString().replace(',',Character.valueOf('\n')));
+    }
+
+
     
     public static ArrayList<ArrayList<Integer>> getRGBComponents(BufferedImage Image){
         ArrayList<ArrayList<Integer>> colorsImage= new ArrayList();
