@@ -18,6 +18,7 @@ import javax.swing.JLabel;
 
 public class VanGoghProject {
     public static int genCounter=0;
+    public static ArrayList<ArrayList<Integer>> targetColors;
     public static double similarityIndex=0;
     public static int MAX_NUM_IMGS=100;
     public static int GenerationSize=10;

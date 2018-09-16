@@ -6,6 +6,7 @@
 package vangoghproject;
 
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
 
@@ -17,30 +18,29 @@ public class Generation extends VanGoghProject{
     int SimilarityIndex;
     BufferedImage Target;
     int GenerationSize;
-    Individual[] Individuals;
+    ArrayList<Individual> Individuals;
 
     public Generation(int GenerationSize,BufferedImage Goal) {
         this.Target = Goal;
         this.GenerationSize = GenerationSize;
-        this.Individuals= new Individual[GenerationSize];
+        this.Individuals= new ArrayList<Individual>();
         createGeneration();
     }
     
     public void createGeneration(){
         for(int i=0; i<GenerationSize;i++){
-            Individuals[i]= new Individual(Target);
-            Individuals[i].generateImage();
-            Individuals[i].calculateHealth();
+            Individuals.add(new Individual(Target));
+            Individuals.get(i).calculateHealth();
         }
     }
     
     public Individual getHealthiest(){
         Individual healthiest;
-        healthiest=Individuals[0];
+        healthiest=Individuals.get(0);
         
-        for(int i=1;i<Individuals.length;i++){
-            if (Individuals[i].health < healthiest.health){
-                healthiest=Individuals[i];
+        for(int i=1;i<Individuals.size();i++){
+            if (Individuals.get(i).health < healthiest.health){
+                healthiest=Individuals.get(i);
             }
         }
         return healthiest;
@@ -53,16 +53,16 @@ public class Generation extends VanGoghProject{
         Individual best1;
         Individual best2;
         int bestIndex=getHealthiestIndex();
-        best1=Individuals[bestIndex];
-        Individual[] sub = Arrays.copyOfRange(Individuals,bestIndex,bestIndex+1);
+        best1=Individuals.get(bestIndex);
+        //Individual[] sub = Arrays.copyOfRange(Individuals,bestIndex,bestIndex+1);
         bestIndex=getHealthiestIndex();
-        best2=Individuals[bestIndex];
-        Individuals = new Individual[GenerationSize];
+        best2=Individuals.get(bestIndex);
+        Individuals = new ArrayList<Individual>();
         
         for(int i=0;i<GenerationSize;i++){
-            Individuals[i]=breed(best1,best2);
-            Individuals[i].mutate();
-            Individuals[i].calculateHealth();
+            Individuals.get(i)=breed(best1,best2);
+            Individuals.get(i).mutate();
+            Individuals.get(i).calculateHealth();
         }
     }
 
@@ -70,8 +70,8 @@ public class Generation extends VanGoghProject{
         int healthiest;
         healthiest=0;
         
-        for(int i=1;i<Individuals.length;i++){
-            if(Individuals[i].health<Individuals[healthiest].health){
+        for(int i=1;i<Individuals.size();i++){
+            if(Individuals.get(i).health<Individuals.get(healthiest).health){
                 healthiest=i;
             }
         }
@@ -93,16 +93,16 @@ public class Generation extends VanGoghProject{
                     offspring.p[i]=splat2.p[i];
                 }
         }
-    }else{
-        //5050
-        for(int i=0;i<splat1.p.length/2;i++){
-            offspring.p[i]=splat1.p[1];
+        }else{
+            //5050
+            for(int i=0;i<splat1.p.length/2;i++){
+                offspring.p[i]=splat1.p[1];
+            }
+            for(int i=splat1.p.length/2+1;i<splat1.p.length;i++){
+                offspring.p[i]=splat2.p[i];
+            }
+            }
+        return offspring;
         }
-        for(int i=splat1.p.length/2+1;i<splat1.p.length;i++){
-            offspring.p[i]=splat2.p[i];
-        }
-        }
-    return offspring;
-    }
 
 }

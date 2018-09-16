@@ -7,13 +7,17 @@ import java.util.ArrayList;
 import javax.imageio.ImageIO;
 
 public class ImageLoader {
-    private BufferedImage loadedImage;
+    public BufferedImage loadedImage;
     /**
      * ImageLoader class constructor
      * @param path 
      */
     public ImageLoader(String path){
         loadedImage = loadImage(path);
+    }
+    
+    public BufferedImage getLoadedImage(){
+        return this.loadedImage;
     }
     
     public ImageLoader(BufferedImage image){
