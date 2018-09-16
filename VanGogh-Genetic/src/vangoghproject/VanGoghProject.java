@@ -27,6 +27,7 @@ public class VanGoghProject {
     public static String resDirectory=juandiDir;
     
     public static void main(String[] args){
+        
         BufferedImage goalImg = null;
         try {
             goalImg = ImageIO.read(new File(resDirectory+"downhillduck.bmp"));
@@ -34,6 +35,9 @@ public class VanGoghProject {
             System.out.println("Imagen no existe");
             
         }
+        
+        Generation gen= new Generation(MAX_NUM_IMGS, goalImg);
+        
         
         JFrame frame = new JFrame();
         ImageIcon image = new ImageIcon(goalImg);
@@ -47,7 +51,7 @@ public class VanGoghProject {
         frame.setSize(1000, 750);
         frame.setDefaultCloseOperation(EXIT_ON_CLOSE);
             
-        
+        gen.getHealthiest();
         /*ImageGenerator gen0 = new ImageGenerator();
         for(int i=1;i<=MAX_NUM_IMGS;i++){//Genera las primeras 1000 imagenes
             gen0.generateImages(i,genCounter,goalImg.getWidth(),goalImg.getHeight());
@@ -138,6 +142,19 @@ public static void verRanking(ArrayList<Pair<String,Double>> ranking){
         return colorsImage;
     }
     
+    public static ArrayList<Color> getColorsArray(BufferedImage buffedImg){ 
+
+        ArrayList<Color> colors = new ArrayList<Color>();
+        for(int x=0;x<buffedImg.getWidth();x++){  //Dura n
+            for(int y=0;y<buffedImg.getHeight();y++){  //Dura n
+               //Brings out RGB int value 
+               Color pixelColor = new Color(buffedImg.getRGB(x,y));
+               colors.add(pixelColor);
+            }
+        }
+        //System.out.println(colors.toString());
+        return colors;
+    }
     
     public static double euclidianDistance(BufferedImage ImageA, BufferedImage ImageB)
     {

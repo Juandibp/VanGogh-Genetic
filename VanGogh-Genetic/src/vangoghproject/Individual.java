@@ -22,7 +22,7 @@ public class Individual extends VanGoghProject {
 
     public Individual(BufferedImage Target) {
         this.Target = Target;
-        this. max = Target.getWidth()*Target.getHeight();
+        this.max = Target.getWidth()*Target.getHeight();
         this.p = new Color [max];
         this.health=0;
     }
@@ -59,11 +59,4 @@ public class Individual extends VanGoghProject {
         this.health = euclidianDistance(Target,p);
         return health;
     }
-    
-    
-    
-    
-    
-    
-
 }
