@@ -13,7 +13,7 @@ import java.util.Random;
  *
  * @author juand
  */
-public class Individual {
+public class Individual extends VanGoghProject {
     int max;
     Color[] p;
     double health;
@@ -25,7 +25,11 @@ public class Individual {
         this.p = new Color [max];
         this.health=0;
     }
-    
+
+    public BufferedImage getTarget() {
+        return Target;
+    }
+
     public void generateImage(){
         for(int i=1; i<p.length;i++){
             Random rand = new Random();
@@ -37,17 +41,23 @@ public class Individual {
         }
     }
     
+    public void mutate(){
+        Random rand= new Random();
+        for(int i=0;i<(int)rand.nextInt(11);i++){
+            int r = (int)rand.nextInt(p.length+1);
+            p[r]= new Color(rand.nextInt(256),rand.nextInt(256),rand.nextInt(256));
+        }
+    }
+    
+        public double calculateHealth(){
+        this.health = euclidianDistance(Target,p);
+        return health;
+    }
     
     
     
     
     
     
-    
-    
-    
-    
-    
-    
-    
+
 }

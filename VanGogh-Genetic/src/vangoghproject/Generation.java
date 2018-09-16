@@ -19,10 +19,10 @@ public class Generation extends VanGoghProject{
     int GenerationSize;
     Individual[] Individuals;
 
-    public Generation(BufferedImage Goal, int GenerationSize) {
+    public Generation(int GenerationSize,BufferedImage Goal) {
         this.Target = Goal;
         this.GenerationSize = GenerationSize;
-        this.Individuals= new Individual(GenerationSize);
+        this.Individuals= new Individual[GenerationSize];
         createGeneration();
     }
     
@@ -61,8 +61,8 @@ public class Generation extends VanGoghProject{
         
         for(int i=0;i<GenerationSize;i++){
             Individuals[i]=breed(best1,best2);
-            Individuals[i]=mutate();
-            Individuals[i]=calculateHealth();
+            Individuals[i].mutate();
+            Individuals[i].calculateHealth();
         }
     }
 
