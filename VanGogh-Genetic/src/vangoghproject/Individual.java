@@ -67,7 +67,13 @@ public class Individual extends VanGoghProject {
         }/*/
     }
     public void mutate(){
-        
+        Random randint = new Random(System.currentTimeMillis());
+        for(int i=0;i!=25;i++){
+            int x= randint.nextInt(Target.getWidth());
+            int y = randint.nextInt(Target.getHeight());
+            int rgb = Target.getRGB(x,y);
+            this.p.setRGB(x, y, rgb);
+        }
     }
     
     public double calculateHealth(){
