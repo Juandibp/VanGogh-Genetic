@@ -26,7 +26,9 @@ public class VanGoghProject {
     public static String fengDir="D:\\josep\\Documents\\GitRepos\\VanGogh-Genetic\\data\\";
     public static String juandiDir="C:\\Users\\juand\\Documents\\GitHub\\VanGogh-Genetic\\data\\";
     public static String resDirectory=juandiDir;
-    public static String DistanceType="BEJARANO-FENG";
+    //public static String DistanceType="BEJARANO-FENG";
+    //public static String DistanceType="EUCLIDEAN";
+    public static String DistanceType="MANHATTAN";
     
     public static BufferedImage goalImg;
     
@@ -281,17 +283,19 @@ public static double EuclideanDistanceCalculator(double[] ImageA, double[] Image
     
     
     public static double manhattanDistance(BufferedImage ImageA, BufferedImage ImageB){ //Uses GrayScale for Efficiency 
-        BufferedImage targetGray = ImageToGrayscale(ImageA);
-        BufferedImage genGray = ImageToGrayscale(ImageB);
-        ArrayList<ArrayList<Integer>> colorsA = getRGBComponents(targetGray);
-        ArrayList<ArrayList<Integer>> colorsB = getRGBComponents(genGray);
+        ArrayList<ArrayList<Integer>> colorsA = getRGBComponents(ImageA);
+        ArrayList<ArrayList<Integer>> colorsB = getRGBComponents(ImageB);
         double Sum=0;
-        double gray=0;
+        double red=0;
+        double green=0;
+        double blue=0;
 
         for(int i=0;i<colorsA.size()-1;i++) {
-            gray = gray + Math.abs((colorsA.get(i).get(0)-colorsB.get(i).get(0)));
+            red = red + Math.abs((colorsA.get(i).get(0)-colorsB.get(i).get(0)));
+            green = green + Math.abs((colorsA.get(i).get(1)-colorsB.get(i).get(1)));
+            blue = blue + Math.abs((colorsA.get(i).get(2)-colorsB.get(i).get(2)));
         }
-        Sum=Sum+gray;
+        Sum=Sum+red+green+blue;
         return Sum;
         
     }
