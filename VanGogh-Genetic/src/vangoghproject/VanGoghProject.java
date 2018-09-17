@@ -15,16 +15,18 @@ import javax.swing.JFrame;
 import static javax.swing.JFrame.EXIT_ON_CLOSE;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import Setup.ImageLoader;
 
 public class VanGoghProject {
     public static int genCounter=0;
     public static ArrayList<ArrayList<Integer>> targetColors;
     public static double similarityIndex=0;
-    public static int MAX_NUM_IMGS=10;
-    public static int GenerationSize=10;
+    public static int MAX_NUM_IMGS=15;
+    public static int GenerationSize=15;
     public static String fengDir="D:\\josep\\Documents\\GitRepos\\VanGogh-Genetic\\data\\";
     public static String juandiDir="C:\\Users\\juand\\Documents\\GitHub\\VanGogh-Genetic\\data\\";
-    public static String resDirectory=fengDir;
+    public static String resDirectory=juandiDir;
+    public static String DistanceType="BEJARANO-FENG";
     
     public static BufferedImage goalImg;
     
@@ -32,6 +34,7 @@ public class VanGoghProject {
         try {
             System.out.println("Searching in: "+resDirectory);
             goalImg = ImageIO.read(new File(resDirectory+"downhillduck.bmp"));
+            //goalImg = ImageIO.read(new File(resDirectory+"NickCage.bmp"));
           
         } catch (IOException e) {
             System.out.println("Imagen no existe");
@@ -80,13 +83,12 @@ public class VanGoghProject {
     public static void startGenerations (JFrame frame,JLabel genLabel,Generation gen){
         long startTime = System.currentTimeMillis();
         Individual currentBest;
-
-        while (gen.SimilarityIndex<=2000){
+        int i=1;
+        while (gen.SimilarityIndex<=10000){
             currentBest= gen.getHealthiest();
-            currentBest.setName("Image"+String.valueOf((int)currentBest.calculateHealth()));
-            
+            currentBest.setName("Image"+String.valueOf((int)currentBest.calculateHealth(DistanceType)));
             ImageIcon generationStandard = new ImageIcon(currentBest.getGenImage());
-            VanGoghProject.toFile(currentBest.getGenImage(),currentBest.getName());
+
             genLabel.setIcon(generationStandard);
             frame.add(genLabel);
             frame.setLayout(null);
@@ -94,13 +96,16 @@ public class VanGoghProject {
             genLabel.setSize(1500, 750);
             genLabel.setVisible(true);
             genLabel.updateUI();
-            Generation NextGen = new Generation (gen.getNextGeneration(),goalImg);
-
+            if(i%10==0){
+                VanGoghProject.toFile(currentBest.getGenImage(),currentBest.getName());
+                Generation NextGen = new Generation (gen.getNextGeneration(),goalImg);
+                i+=1;
+            }else{
+                Generation NextGen = new Generation (gen.getNextGeneration(),goalImg);
+                i+=1;
+            }
         }
-        long endTime = System.currentTimeMillis();
-        System.out.println("That took " + (endTime - startTime) + " milliseconds");
     }
-    
 public static void test(BufferedImage goalImg){
         int value=0;
  
@@ -203,6 +208,46 @@ public static double EuclideanDistanceCalculator(double[] ImageA, double[] Image
         return colorsImage;
     }
     
+    public static ArrayList<Integer> getColorFromPixel(int x,int y, BufferedImage Img){
+        ArrayList<Integer>rgbComponents=new ArrayList<Integer>();
+        int imageRGB =Img.getRGB(x,y);
+        
+        //Decomposition of the int into its RGB components
+        int a = (imageRGB >> 24) & 0xff;
+        int r = (imageRGB >> 16) & 0xff;
+        int g = (imageRGB >> 8) & 0xff;
+        int b = imageRGB & 0xff;
+               
+        //Adds those components int the rgbComponents ArrayList           
+        rgbComponents.add(a);
+        rgbComponents.add(r);
+        rgbComponents.add(g);
+        rgbComponents.add(b);
+        
+        return rgbComponents;
+    }
+    
+    public static BufferedImage ImageToGrayscale(BufferedImage imagen){
+        BufferedImage grayImg = new BufferedImage(imagen.getWidth(),imagen.getHeight(),BufferedImage.TYPE_INT_ARGB);
+        for(int x=0;x<imagen.getWidth();x++){
+            for(int y=0;y<imagen.getHeight();y++){
+                ArrayList<Integer> argbComponents=getColorFromPixel(x, y,imagen);
+
+                int a = argbComponents.get(0);
+                int r = argbComponents.get(1);
+                int g = argbComponents.get(2);
+                int b = argbComponents.get(3);       
+                
+                int avg = (r+g+b)/3;
+                
+                int newPixel = (a<<24)|(avg<<16)|(avg<<8)|avg;
+                
+                grayImg.setRGB(x, y, newPixel);
+            }
+        }
+        return grayImg;
+    }
+    
     public static ArrayList<Color> getColorsArray(BufferedImage buffedImg){ 
 
         ArrayList<Color> colors = new ArrayList<Color>();
@@ -234,6 +279,37 @@ public static double EuclideanDistanceCalculator(double[] ImageA, double[] Image
         return Math.sqrt(Sum);
     }
     
+    
+    public static double manhattanDistance(BufferedImage ImageA, BufferedImage ImageB){ //Uses GrayScale for Efficiency 
+        BufferedImage targetGray = ImageToGrayscale(ImageA);
+        BufferedImage genGray = ImageToGrayscale(ImageB);
+        ArrayList<ArrayList<Integer>> colorsA = getRGBComponents(targetGray);
+        ArrayList<ArrayList<Integer>> colorsB = getRGBComponents(genGray);
+        double Sum=0;
+        double gray=0;
+
+        for(int i=0;i<colorsA.size()-1;i++) {
+            gray = gray + Math.abs((colorsA.get(i).get(0)-colorsB.get(i).get(0)));
+        }
+        Sum=Sum+gray;
+        return Sum;
+        
+    }
+    
+    public static double BejaranoFengDistance (BufferedImage ImageA, BufferedImage ImageB){ //Uses GrayScale for Efficiency 
+        BufferedImage targetGray = ImageToGrayscale(ImageA);
+        BufferedImage genGray = ImageToGrayscale(ImageB);
+        ArrayList<ArrayList<Integer>> colorsA = getRGBComponents(targetGray);
+        ArrayList<ArrayList<Integer>> colorsB = getRGBComponents(genGray);
+        double Sum=0;
+        double gray=0;
+
+        for(int i=0;i<colorsA.size()-1;i++) {
+            gray = gray + Math.abs((Math.log(colorsA.get(i).get(0)))-(Math.log(colorsB.get(i).get(0))));
+        }
+        Sum=Sum+gray;
+        return Sum;
+    }
    /* public static double euclidianDistance(BufferedImage ImageA, Color[] p)
     {
         ArrayList<ArrayList<Integer>> colorsA = getRGBComponents(ImageA);

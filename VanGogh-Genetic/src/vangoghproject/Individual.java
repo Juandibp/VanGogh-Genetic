@@ -91,7 +91,7 @@ public BufferedImage getGenImage() {
     public void mutate(){
         Random randint = new Random(System.currentTimeMillis());
 
-        int tries = 25;
+        int tries = 50;
         while(tries !=0){
             int x= randint.nextInt(this.width);
             int y = randint.nextInt(this.height);
@@ -106,8 +106,20 @@ public BufferedImage getGenImage() {
         }
     }
 
-    public double calculateHealth(){
-        this.health = euclidianDistance(Target,p);
+    public double calculateHealth(String Distance){
+        if (Distance=="EUCLIDEAN"){
+            this.health = euclidianDistance(Target,p);
+            return health;
+        }
+        if (Distance=="MANHATTAN"){
+            this.health = manhattanDistance(Target,p);
+            return health;
+        }
+        if (Distance=="BEJARANO-FENG"){
+            this.health = BejaranoFengDistance(Target,p);
+            return health;
+        }
+        
         return health;
     }
 }

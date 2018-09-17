@@ -140,7 +140,7 @@ public class Generation extends VanGoghProject{
             Individual newIndividual = breed(best1,best2);
             Individuals.add(newIndividual);
             Individuals.get(i).mutate();
-            Individuals.get(i).calculateHealth();
+            Individuals.get(i).calculateHealth(DistanceType);
         }
         return Individuals;
     }
