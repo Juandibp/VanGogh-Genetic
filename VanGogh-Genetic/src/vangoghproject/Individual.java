@@ -90,8 +90,8 @@ public BufferedImage getGenImage() {
         }
     public void mutate(){
         Random randint = new Random(System.currentTimeMillis());
-
-        int tries = 50;
+        
+        int tries = ((this.width*this.height)*1)/100;
         while(tries !=0){
             int x= randint.nextInt(this.width);
             int y = randint.nextInt(this.height);

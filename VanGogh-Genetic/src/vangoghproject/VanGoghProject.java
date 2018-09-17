@@ -26,9 +26,9 @@ public class VanGoghProject {
     public static String fengDir="D:\\josep\\Documents\\GitRepos\\VanGogh-Genetic\\data\\";
     public static String juandiDir="C:\\Users\\juand\\Documents\\GitHub\\VanGogh-Genetic\\data\\";
     public static String resDirectory=juandiDir;
-    //public static String DistanceType="BEJARANO-FENG";
+    public static String DistanceType="BEJARANO-FENG";
     //public static String DistanceType="EUCLIDEAN";
-    public static String DistanceType="MANHATTAN";
+    //public static String DistanceType="MANHATTAN";
     
     public static BufferedImage goalImg;
     
