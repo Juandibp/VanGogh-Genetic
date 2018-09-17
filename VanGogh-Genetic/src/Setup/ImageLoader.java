@@ -37,6 +37,10 @@ public class ImageLoader {
         return img.getHeight();
     }
     
+    public BufferedImage getLoadedImage2(){
+        return this.loadedImage;
+    }
+    
     public BufferedImage loadImage(String path){
         try {
             BufferedImage retrievedImage = ImageIO.read(new File(path));

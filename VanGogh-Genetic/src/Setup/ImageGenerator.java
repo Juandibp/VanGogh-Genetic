@@ -40,13 +40,41 @@ public class ImageGenerator {
                 buffedImage.setRGB(x, y, rgb);              
             }
         }
-        File newImage= new File(VanGoghProject.resDirectory+"Image"+imageNumber+"Gen"+imageGeneration+".bmp");
+        File newImage= new File(VanGoghProject.resDirectory+"Image"+imageNumber+"Gen"+imageGeneration);
         try {
             ImageIO.write(buffedImage, "BMP", newImage);
             //System.out.println("Image generated succesfully @"+newImage.toString());
         } catch (IOException ex) {
             JOptionPane.showMessageDialog(null, "Oops! An error occurred");
             
+        }
+    }
+    
+    public static void generateImage2(int imageNumber,int imageGeneration, int largo, int ancho){
+        Random randint = new Random(System.currentTimeMillis());
+        int r,g,b;
+        BufferedImage buffedImage=new BufferedImage(largo,ancho,BufferedImage.TYPE_INT_RGB);
+        //System.out.println("Image: "+buffedImage.toString());
+        for(int x=0;x<largo;x++){
+            for(int y=0;y<ancho;y++){
+                
+                r=randint.nextInt(255);
+                g=randint.nextInt(255);
+                b=randint.nextInt(255);
+             
+                Color colour = new Color(r,g,b);
+                int rgb=colour.getRGB();
+                //System.out.println(String.valueOf(r)+","+String.valueOf(g)+","+String.valueOf(b)+"("+colour.toString()+")"+"="+colour.getRGB());
+                //System.out.println("Color @"+String.valueOf(x)+","+String.valueOf(y)+" is "+String.valueOf(rgb));
+                buffedImage.setRGB(x, y, rgb);              
+            }
+        }
+        File newImage= new File(VanGoghProject.resDirectory+"Image"+imageNumber+"Gen"+imageGeneration);
+        try {
+            ImageIO.write(buffedImage, "BMP", newImage);
+            //System.out.println("Image generated succesfully @"+newImage.toString());
+        } catch (IOException ex) {
+            JOptionPane.showMessageDialog(null, "Oops! An error occurred");
         }
     }
 }
