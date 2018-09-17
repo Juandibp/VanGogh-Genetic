@@ -2,7 +2,6 @@ package vangoghproject;
 
 import Setup.*;
 import java.awt.Color;
-import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -11,48 +10,36 @@ import java.util.Collections;
 import java.util.Comparator;
 import javafx.util.Pair;
 import javax.imageio.ImageIO;
-import javax.swing.ImageIcon;
-import javax.swing.JFrame;
-import static javax.swing.JFrame.EXIT_ON_CLOSE;
-import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 
 public class VanGoghProject {
     public static int genCounter=0;
     public static ArrayList<ArrayList<Integer>> targetColors;
     public static double similarityIndex=0;
-    public static int MAX_NUM_IMGS=100;
+    public static int MAX_NUM_IMGS=10;
     public static int GenerationSize=10;
-    public static String fengDir="C:\\Users\\josep\\Desktop\\res\\";
+    public static String fengDir="D:\\josep\\Documents\\GitRepos\\VanGogh-Genetic\\data\\";
     public static String juandiDir="C:\\Users\\juand\\Documents\\GitHub\\VanGogh-Genetic\\data\\";
+    public static String resDirectory=fengDir;
     
-    public static String resDirectory=juandiDir;
+    public static BufferedImage goalImg;
     
     public static void main(String[] args){
-        
-        BufferedImage goalImg = null;
+
         try {
+            System.out.println("Searching in: "+resDirectory);
             goalImg = ImageIO.read(new File(resDirectory+"downhillduck.bmp"));
+          
         } catch (IOException e) {
             System.out.println("Imagen no existe");
             
         }
+          Generation gen= new Generation(MAX_NUM_IMGS, goalImg);
+          gen.getStrongest();
         
-        Generation gen= new Generation(MAX_NUM_IMGS, goalImg);
+        //gen.test();
+        //gen.getHealthiest();
         
-        
-        JFrame frame = new JFrame();
-        ImageIcon image = new ImageIcon(goalImg);
-        JLabel imageLabel = new JLabel(image);
-        frame.add(imageLabel);
-        frame.setLayout(null);
-        imageLabel.setLocation(0, 0);
-        imageLabel.setSize(500, 750);
-        imageLabel.setVisible(true);
-        frame.setVisible(true);
-        frame.setSize(1000, 750);
-        frame.setDefaultCloseOperation(EXIT_ON_CLOSE);
-            
-        gen.getHealthiest();
         /*ImageGenerator gen0 = new ImageGenerator();
         for(int i=1;i<=MAX_NUM_IMGS;i++){//Genera las primeras 1000 imagenes
             gen0.generateImages(i,genCounter,goalImg.getWidth(),goalImg.getHeight());
@@ -63,6 +50,7 @@ public class VanGoghProject {
         /*while(similarityIndex<=90.0){
             test();
         }*/
+ 
     }
     
 public static void test(BufferedImage goalImg){
@@ -117,7 +105,31 @@ public static void verRanking(ArrayList<Pair<String,Double>> ranking){
         System.out.println(ranking.toString().replace(',',Character.valueOf('\n')));
     }
 
+public static ArrayList<Pair<String,Double>> sortRanking(ArrayList<Pair<String,Double>> ranking){
+        Collections.sort(ranking,new Comparator<Pair<String,Double>>(){
+           @Override
+           public int compare(Pair<String,Double > o1,Pair<String,Double> o2){
+                if (o1.getValue() > o2.getValue()) {
+                    return -1;
+                } else if (o1.getValue().equals(o2.getValue())) {
+                    return 0;
+                } else {
+                    return 1;
+                }
+           }
+        });
+        System.out.println(ranking.toString().replace(',',Character.valueOf('\n')));
+        return ranking;
+    }
 
+public static double EuclideanDistanceCalculator(double[] ImageA, double[] ImageB)
+    {
+        double Sum = 0.0;
+        for(int i=0;i<ImageA.length;i++) {
+           Sum = Sum + Math.pow((ImageA[i]-ImageB[i]),2.0);
+        }
+        return Math.sqrt(Sum);
+    }
     
     public static ArrayList<ArrayList<Integer>> getRGBComponents(BufferedImage Image){
         ArrayList<ArrayList<Integer>> colorsImage= new ArrayList();
@@ -214,9 +226,6 @@ public static void verRanking(ArrayList<Pair<String,Double>> ranking){
         return colorsImage;
     }
         
-    
-        
-    
     /**
      * Coge dos vectores y calcula su diferencia Euclideana
      * @param imageA
@@ -242,4 +251,14 @@ public static void verRanking(ArrayList<Pair<String,Double>> ranking){
         //System.out.println("There were "+hits+" hits.");
         return hits;
     }
+    
+    public static void toFile(BufferedImage newImageP,String filename){
+        File newImageFile= new File(VanGoghProject.resDirectory+filename+".bmp");
+        try {
+            ImageIO.write(newImageP, "BMP", newImageFile);
+            //System.out.println("Image generated succesfully @"+newImage.toString());
+        } catch (IOException ex) {
+            JOptionPane.showMessageDialog(null, "Oops! An error occurred"); 
+        }
+    }   
 }
