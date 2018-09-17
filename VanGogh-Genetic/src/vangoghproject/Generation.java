@@ -57,10 +57,10 @@ public class Generation extends VanGoghProject{
         //Individual[] sub = Arrays.copyOfRange(Individuals,bestIndex,bestIndex+1);
         bestIndex=getHealthiestIndex();
         best2=Individuals.get(bestIndex);
-        Individuals = new ArrayList<Individual>();
+        //Individuals = new ArrayList<Individual>();
         
         for(int i=0;i<GenerationSize;i++){
-            Individuals.get(i)=breed(best1,best2);
+            Individuals.set(i,breed(best1,best2));
             Individuals.get(i).mutate();
             Individuals.get(i).calculateHealth();
         }
@@ -78,31 +78,33 @@ public class Generation extends VanGoghProject{
         return healthiest;
     }
     
-    Individual breed(Individual splat1, Individual splat2){
+    public Individual breed(Individual splat1, Individual splat2){
         Random rand= new Random();
         float r= rand.nextInt(101);
         Individual offspring;
         offspring=new Individual(Target);
-        
+
         if(r>50){
-            for(int i=0; i<splat1.p.length;i++){
-                // one for one
-                if (i%2==0){
-                    offspring.p[i]=splat1.p[i];
-                }else{
-                    offspring.p[i]=splat2.p[i];
-                }
-        }
+             // one for one
+            for(int x=0; x<splat1.p.getWidth();x+=2){
+               for(int y=0;y<splat1.p.getHeight();y+=2){
+                   offspring.p.setRGB(x, y,splat1.p.getRGB(x,y));
+                   offspring.p.setRGB(x+1, y+1,splat2.p.getRGB(x+1,y+1));
+               }
+            }
+            return offspring;
         }else{
             //5050
-            for(int i=0;i<splat1.p.length/2;i++){
-                offspring.p[i]=splat1.p[1];
+            for(int x=0;x<splat1.p.getWidth();x++){
+                for(int y=0;y<splat1.p.getHeight();y++){
+                    if(x >= (splat1.p.getWidth()/2)){
+                        offspring.p.setRGB(x, y, splat2.p.getRGB(x,y));
+                    }else{
+                     offspring.p.setRGB(x, y, splat1.p.getRGB(x,y));
+                    }
+                }
             }
-            for(int i=splat1.p.length/2+1;i<splat1.p.length;i++){
-                offspring.p[i]=splat2.p[i];
-            }
-            }
-        return offspring;
+            return offspring;
         }
-
+    }
 }
