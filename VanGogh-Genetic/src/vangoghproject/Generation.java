@@ -154,48 +154,30 @@ public class Generation extends VanGoghProject{
 
         if(r>50){
              // one for one
-<<<<<<< HEAD
-            for(int x=0; x<splat1.p.getWidth();x+=2){
-               for(int y=0;y<splat1.p.getHeight();y+=2){
-=======
+
             for(int x=0; x<splat1.width;x+=2){
                for(int y=0;y<splat1.height;y+=2){
->>>>>>> master
                    offspring.p.setRGB(x, y,splat1.p.getRGB(x,y));
                    offspring.p.setRGB(x+1, y+1,splat2.p.getRGB(x+1,y+1));
                }
             }
-<<<<<<< HEAD
             return offspring;
-        }else{
-            //5050
-            for(int x=0;x<splat1.p.getWidth();x++){
-                for(int y=0;y<splat1.p.getHeight();y++){
-                    if(x >= (splat1.p.getWidth()/2)){
-=======
-            VanGoghProject.toFile(offspring.p, "Offspring.bmp");
-            return offspring;
+
         }else{
             //5050
             for(int x=0;x<splat1.width;x++){
                 for(int y=0;y<splat1.height;y++){
                     if(x >= (splat1.width/2)){
->>>>>>> master
                         offspring.p.setRGB(x, y, splat2.p.getRGB(x,y));
                     }else{
                      offspring.p.setRGB(x, y, splat1.p.getRGB(x,y));
                     }
                 }
             }
-<<<<<<< HEAD
             return offspring;
         }
-    }
-=======
+    
             VanGoghProject.toFile(offspring.p, "Offspring.bmp");
             return offspring;
         }
-    }
-
->>>>>>> master
 }
