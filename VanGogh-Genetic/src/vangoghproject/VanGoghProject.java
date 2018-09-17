@@ -21,15 +21,13 @@ public class VanGoghProject {
     public static ArrayList<ArrayList<Integer>> targetColors;
     public static double similarityIndex=0;
     public static int MAX_NUM_IMGS=10;
-    public static int GenerationSize=100;
+    public static int GenerationSize=10;
     public static String fengDir="D:\\josep\\Documents\\GitRepos\\VanGogh-Genetic\\data\\";
     public static String juandiDir="C:\\Users\\juand\\Documents\\GitHub\\VanGogh-Genetic\\data\\";
     public static String resDirectory=juandiDir;
-    
     public static BufferedImage goalImg;
     
     public static void main(String[] args){
-
         try {
             System.out.println("Searching in: "+resDirectory);
             goalImg = ImageIO.read(new File(resDirectory+"downhillduck.bmp"));
@@ -61,7 +59,7 @@ public class VanGoghProject {
         genLabel.setSize(1500, 750);
         genLabel.setVisible(true);
         Generation NextGen = new Generation (gen.getNextGeneration(),goalImg);
-        startGenerations(frame,genLabel,NextGen);
+        startGenerations(frame,genLabel,NextGen,gen.getStrongest());
          
         
          
@@ -81,8 +79,9 @@ public class VanGoghProject {
  
     }
  
-    public static void startGenerations (JFrame frame,JLabel genLabel,Generation gen){
-        while (gen.SimilarityIndex>1000){
+    public static void startGenerations (JFrame frame,JLabel genLabel,Generation gen,double health){
+        if(health>1000){
+            System.out.println("Elba Lazo " + health);
             ImageIcon generationStandard = new ImageIcon(gen.getHealthiest().getGenImage());
             genLabel.setIcon(generationStandard);
             frame.add(genLabel);
@@ -91,11 +90,13 @@ public class VanGoghProject {
             genLabel.setSize(1500, 750);
             genLabel.setVisible(true);
             Generation NextGen = new Generation (gen.getNextGeneration(),goalImg);
-            startGenerations(frame,genLabel,NextGen);
+            System.out.println(NextGen);
+            System.out.println(gen.getStrongest());
+            startGenerations (frame,genLabel,NextGen,gen.getStrongest());
+       
         }
     }
-            
-            
+    
 public static void test(BufferedImage goalImg){
         int value=0;
  

@@ -31,22 +31,16 @@ public class Generation extends VanGoghProject{
 
     public Generation(int GenerationSizeP,BufferedImage Goal) {
         this.Target = Goal;
-
-        this.GenerationSize = GenerationSize;
-
         this.GenerationSize = GenerationSizeP;
-
         this.Individuals= new ArrayList<Individual>();
         createGeneration();
     }
     
     public Generation(ArrayList<Individual> newGen, BufferedImage Goal) {
         this.Target = Goal;
-
         this.GenerationSize = newGen.size();
-
         this.Individuals= newGen;
-        createGeneration();
+        //createGeneration();
     }
     
     public void createGeneration(){
@@ -115,7 +109,6 @@ public class Generation extends VanGoghProject{
     public Individual retrieveIndividual(String filename){
         for(int i=0;i!=Individuals.size();i++){
             if((filename).equals(Individuals.get(i).getName()+".bmp")){
-                
                 return Individuals.get(i); // This is the healthiest
             }else{
                 continue;
