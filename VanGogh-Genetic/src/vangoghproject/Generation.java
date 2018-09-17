@@ -44,13 +44,12 @@ public class Generation extends VanGoghProject{
     }
     
     public void createGeneration(){
-        System.out.println("Generation size="+GenerationSize);
         for(int i=0; i<=GenerationSize;i++){
             Individual newEntry =new Individual(Target);
             newEntry.generateImage();
             newEntry.setName("Image"+String.valueOf(i));
             this.Individuals.add(newEntry);
-            VanGoghProject.toFile(newEntry.p,newEntry.getName());
+            //VanGoghProject.toFile(newEntry.p,newEntry.getName());
         }
         Individuals.toString();
     }
@@ -96,28 +95,35 @@ public class Generation extends VanGoghProject{
         Individual healthiest=null;
         //System.out.println(ranking.get(ranking.size()-1).getKey());
         healthiest = retrieveIndividual(ranking.get(ranking.size()-1).getKey());
+        VanGoghProject.toFile(healthiest.getGenImage(),healthiest.getName());
+        //System.out.println(Individuals.toString());
+        //System.out.println("Current generation size: "+ String.valueOf(Individuals.size()));
         return healthiest;
     }
     
     public double getStrongest(){
         ArrayList<Pair<String,Double>> ranking =this.rank();
-        System.out.println("getStrongest: "+getHealthiest(ranking).getName());
+        System.out.println("Strongest Individual: "+getHealthiest(ranking).getName());
         this.SimilarityIndex = getHealthiest(ranking).health;
         return this.SimilarityIndex;
     }
     
     public Individual retrieveIndividual(String filename){
-        for(int i=0;i!=Individuals.size();i++){
-            if((filename).equals(Individuals.get(i).getName()+".bmp")){
-                return Individuals.get(i); // This is the healthiest
-            }else{
-                continue;
+        if(Individuals.size()==1){
+            return Individuals.get(0);
+        }else{
+            for(int i=0;i!=Individuals.size();i++){
+                if((filename).equals(Individuals.get(i).getName()+".bmp")){
+
+                    return Individuals.get(i); // This is the healthiest
+                }else{
+                    continue;
+                }
             }
+            return null;
         }
-        return null;
     }
 
-    
     
     public ArrayList<Individual> getNextGeneration(){
         Individual best1;
@@ -125,18 +131,19 @@ public class Generation extends VanGoghProject{
         int bestIndex=getHealthiestIndex();
         best1=Individuals.get(bestIndex);
         //Individual[] sub = Arrays.copyOfRange(Individuals,bestIndex,bestIndex+1);
-        bestIndex=getHealthiestIndex();
         best2=Individuals.get(bestIndex);
         //Individuals = new ArrayList<Individual>();
-        
+        this.Individuals.clear();
+        Individuals.add(best1);
+        Individuals.add(best2);
         for(int i=0;i<GenerationSize;i++){
-            Individuals.set(i,breed(best1,best2));
+            Individual newIndividual = breed(best1,best2);
+            Individuals.add(newIndividual);
             Individuals.get(i).mutate();
             Individuals.get(i).calculateHealth();
         }
         return Individuals;
     }
-    
 
     public int getHealthiestIndex(){
         int healthiest;
@@ -179,8 +186,6 @@ public class Generation extends VanGoghProject{
                 }
             }
         }
-    
-            VanGoghProject.toFile(offspring.p, "Offspring.bmp");
             return offspring;
         }
 }

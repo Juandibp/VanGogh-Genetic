@@ -24,7 +24,8 @@ public class VanGoghProject {
     public static int GenerationSize=10;
     public static String fengDir="D:\\josep\\Documents\\GitRepos\\VanGogh-Genetic\\data\\";
     public static String juandiDir="C:\\Users\\juand\\Documents\\GitHub\\VanGogh-Genetic\\data\\";
-    public static String resDirectory=juandiDir;
+    public static String resDirectory=fengDir;
+    
     public static BufferedImage goalImg;
     
     public static void main(String[] args){
@@ -37,9 +38,8 @@ public class VanGoghProject {
             
         }
         Generation gen= new Generation(MAX_NUM_IMGS, goalImg);
-        gen.getStrongest();
-          
-          
+        //gen.getStrongest();
+         
         JFrame frame = new JFrame();
         ImageIcon image = new ImageIcon(goalImg);
         JLabel imageLabel = new JLabel(image);
@@ -59,10 +59,8 @@ public class VanGoghProject {
         genLabel.setSize(1500, 750);
         genLabel.setVisible(true);
         Generation NextGen = new Generation (gen.getNextGeneration(),goalImg);
-        startGenerations(frame,genLabel,NextGen,gen.getStrongest());
-         
-        
-         
+        startGenerations(frame,genLabel,NextGen);
+   
         //gen.test();
         //gen.getHealthiest();
         
@@ -79,22 +77,28 @@ public class VanGoghProject {
  
     }
  
-    public static void startGenerations (JFrame frame,JLabel genLabel,Generation gen,double health){
-        if(health>1000){
-            System.out.println("Elba Lazo " + health);
-            ImageIcon generationStandard = new ImageIcon(gen.getHealthiest().getGenImage());
+    public static void startGenerations (JFrame frame,JLabel genLabel,Generation gen){
+        long startTime = System.currentTimeMillis();
+        Individual currentBest;
+
+        while (gen.SimilarityIndex<=2000){
+            currentBest= gen.getHealthiest();
+            currentBest.setName("Image"+String.valueOf((int)currentBest.calculateHealth()));
+            
+            ImageIcon generationStandard = new ImageIcon(currentBest.getGenImage());
+            VanGoghProject.toFile(currentBest.getGenImage(),currentBest.getName());
             genLabel.setIcon(generationStandard);
             frame.add(genLabel);
             frame.setLayout(null);
             genLabel.setLocation(0, 0);
             genLabel.setSize(1500, 750);
             genLabel.setVisible(true);
+            genLabel.updateUI();
             Generation NextGen = new Generation (gen.getNextGeneration(),goalImg);
-            System.out.println(NextGen);
-            System.out.println(gen.getStrongest());
-            startGenerations (frame,genLabel,NextGen,gen.getStrongest());
-       
+
         }
+        long endTime = System.currentTimeMillis();
+        System.out.println("That took " + (endTime - startTime) + " milliseconds");
     }
     
 public static void test(BufferedImage goalImg){
