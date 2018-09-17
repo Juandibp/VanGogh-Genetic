@@ -10,6 +10,10 @@ import java.util.Collections;
 import java.util.Comparator;
 import javafx.util.Pair;
 import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
+import javax.swing.JFrame;
+import static javax.swing.JFrame.EXIT_ON_CLOSE;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 
 public class VanGoghProject {
@@ -17,10 +21,10 @@ public class VanGoghProject {
     public static ArrayList<ArrayList<Integer>> targetColors;
     public static double similarityIndex=0;
     public static int MAX_NUM_IMGS=10;
-    public static int GenerationSize=10;
+    public static int GenerationSize=100;
     public static String fengDir="D:\\josep\\Documents\\GitRepos\\VanGogh-Genetic\\data\\";
     public static String juandiDir="C:\\Users\\juand\\Documents\\GitHub\\VanGogh-Genetic\\data\\";
-    public static String resDirectory=fengDir;
+    public static String resDirectory=juandiDir;
     
     public static BufferedImage goalImg;
     
@@ -34,9 +38,33 @@ public class VanGoghProject {
             System.out.println("Imagen no existe");
             
         }
-          Generation gen= new Generation(MAX_NUM_IMGS, goalImg);
-          gen.getStrongest();
+        Generation gen= new Generation(MAX_NUM_IMGS, goalImg);
+        gen.getStrongest();
+          
+          
+        JFrame frame = new JFrame();
+        ImageIcon image = new ImageIcon(goalImg);
+        JLabel imageLabel = new JLabel(image);
+        frame.add(imageLabel);
+        frame.setLayout(null);
+        imageLabel.setLocation(0, 0);
+        imageLabel.setSize(500, 750);
+        imageLabel.setVisible(true);
+        frame.setVisible(true);
+        frame.setSize(1000, 750);
+        frame.setDefaultCloseOperation(EXIT_ON_CLOSE);
+        ImageIcon generationStandard = new ImageIcon(gen.getHealthiest().getGenImage());
+        JLabel genLabel = new JLabel(generationStandard);
+        frame.add(genLabel);
+        frame.setLayout(null);
+        genLabel.setLocation(0, 0);
+        genLabel.setSize(1500, 750);
+        genLabel.setVisible(true);
+        Generation NextGen = new Generation (gen.getNextGeneration(),goalImg);
+        startGenerations(frame,genLabel,NextGen);
+         
         
+         
         //gen.test();
         //gen.getHealthiest();
         
@@ -52,7 +80,22 @@ public class VanGoghProject {
         }*/
  
     }
-    
+ 
+    public static void startGenerations (JFrame frame,JLabel genLabel,Generation gen){
+        while (gen.SimilarityIndex>1000){
+            ImageIcon generationStandard = new ImageIcon(gen.getHealthiest().getGenImage());
+            genLabel.setIcon(generationStandard);
+            frame.add(genLabel);
+            frame.setLayout(null);
+            genLabel.setLocation(0, 0);
+            genLabel.setSize(1500, 750);
+            genLabel.setVisible(true);
+            Generation NextGen = new Generation (gen.getNextGeneration(),goalImg);
+            startGenerations(frame,genLabel,NextGen);
+        }
+    }
+            
+            
 public static void test(BufferedImage goalImg){
         int value=0;
  
@@ -186,7 +229,7 @@ public static double EuclideanDistanceCalculator(double[] ImageA, double[] Image
         return Math.sqrt(Sum);
     }
     
-    public static double euclidianDistance(BufferedImage ImageA, Color[] p)
+   /* public static double euclidianDistance(BufferedImage ImageA, Color[] p)
     {
         ArrayList<ArrayList<Integer>> colorsA = getRGBComponents(ImageA);
         ArrayList<ArrayList<Integer>> colorsB = getRGBFromColor(p);
@@ -201,7 +244,7 @@ public static double EuclideanDistanceCalculator(double[] ImageA, double[] Image
         }
         Sum=Sum+Red+Green+Blue;
         return Math.sqrt(Sum);
-    }
+    }*/
     
     public static ArrayList<ArrayList<Integer>> getRGBFromColor(Color[] p){
         ArrayList<ArrayList<Integer>> colorsImage= new ArrayList();

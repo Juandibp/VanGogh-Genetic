@@ -24,7 +24,7 @@ import static vangoghproject.VanGoghProject.resDirectory;
  * @author juand
  */
 public class Generation extends VanGoghProject{
-    int SimilarityIndex;
+    double SimilarityIndex;
     BufferedImage Target;
     int GenerationSize;
     ArrayList<Individual> Individuals;
@@ -37,6 +37,15 @@ public class Generation extends VanGoghProject{
         this.GenerationSize = GenerationSizeP;
 
         this.Individuals= new ArrayList<Individual>();
+        createGeneration();
+    }
+    
+    public Generation(ArrayList<Individual> newGen, BufferedImage Goal) {
+        this.Target = Goal;
+
+        this.GenerationSize = newGen.size();
+
+        this.Individuals= newGen;
         createGeneration();
     }
     
@@ -60,10 +69,9 @@ public class Generation extends VanGoghProject{
         for(int i=1;i<Individuals.size();i++){
             if (Individuals.get(i).health < healthiest.health){
                 healthiest=Individuals.get(i);
-                 return healthiest;
             }
         }
-        return null;
+        return healthiest;
     }
     public ArrayList<Pair<String,Double>> rank(){
         //Arraylist de pares donde se van a guardar pares de String para el nombre de la imagen y un double donde va a estar la distancia Euclideana
@@ -97,10 +105,11 @@ public class Generation extends VanGoghProject{
         return healthiest;
     }
     
-    public String getStrongest(){
+    public double getStrongest(){
         ArrayList<Pair<String,Double>> ranking =this.rank();
         System.out.println("getStrongest: "+getHealthiest(ranking).getName());
-        return "Hello.";
+        this.SimilarityIndex = getHealthiest(ranking).health;
+        return this.SimilarityIndex;
     }
     
     public Individual retrieveIndividual(String filename){
@@ -117,7 +126,7 @@ public class Generation extends VanGoghProject{
 
     
     
-    /*public void getNextGeneration(){
+    public ArrayList<Individual> getNextGeneration(){
         Individual best1;
         Individual best2;
         int bestIndex=getHealthiestIndex();
@@ -132,9 +141,11 @@ public class Generation extends VanGoghProject{
             Individuals.get(i).mutate();
             Individuals.get(i).calculateHealth();
         }
-    }*/
+        return Individuals;
+    }
+    
 
-   /* public int getHealthiestIndex(){
+    public int getHealthiestIndex(){
         int healthiest;
         healthiest=0;
         
@@ -144,7 +155,7 @@ public class Generation extends VanGoghProject{
             }
         }
         return healthiest;
-    }*/
+    }
     
     public Individual breed(Individual splat1, Individual splat2){
         Random rand= new Random();
@@ -174,7 +185,6 @@ public class Generation extends VanGoghProject{
                     }
                 }
             }
-            return offspring;
         }
     
             VanGoghProject.toFile(offspring.p, "Offspring.bmp");
