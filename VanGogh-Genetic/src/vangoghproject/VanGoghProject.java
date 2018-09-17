@@ -1,6 +1,5 @@
 package vangoghproject;
 
-import Setup.*;
 import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -11,8 +10,6 @@ import java.util.Comparator;
 import javafx.util.Pair;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
-import javax.swing.JFrame;
-import static javax.swing.JFrame.EXIT_ON_CLOSE;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import Setup.ImageLoader;
@@ -25,81 +22,73 @@ public class VanGoghProject {
     public static int GenerationSize=15;
     public static String fengDir="D:\\josep\\Documents\\GitRepos\\VanGogh-Genetic\\data\\";
     public static String juandiDir="C:\\Users\\juand\\Documents\\GitHub\\VanGogh-Genetic\\data\\";
-    public static String resDirectory=juandiDir;
-    public static String DistanceType="BEJARANO-FENG";
+    public static String resDirectory=fengDir;
+    //public static String DistanceType="BEJARANO-FENG";
     //public static String DistanceType="EUCLIDEAN";
-    //public static String DistanceType="MANHATTAN";
-    
+    public static String DistanceType="BEJARANO-FENG";
+    public static double similarityGoal;
     public static BufferedImage goalImg;
+    
+    
     
     public static void main(String[] args){
         try {
             System.out.println("Searching in: "+resDirectory);
-            goalImg = ImageIO.read(new File(resDirectory+"downhillduck.bmp"));
-            //goalImg = ImageIO.read(new File(resDirectory+"NickCage.bmp"));
+            goalImg = ImageIO.read(new File(resDirectory+"donald.bmp"));
+            setSimilarityGoal();
           
         } catch (IOException e) {
             System.out.println("Imagen no existe");
             
         }
         Generation gen= new Generation(MAX_NUM_IMGS, goalImg);
-        //gen.getStrongest();
          
-        JFrame frame = new JFrame();
+        mainFrame frame = new mainFrame();
         ImageIcon image = new ImageIcon(goalImg);
-        JLabel imageLabel = new JLabel(image);
-        frame.add(imageLabel);
-        frame.setLayout(null);
-        imageLabel.setLocation(0, 0);
-        imageLabel.setSize(500, 750);
-        imageLabel.setVisible(true);
-        frame.setVisible(true);
-        frame.setSize(1000, 750);
-        frame.setDefaultCloseOperation(EXIT_ON_CLOSE);
+        JLabel imageLabel = frame.getGoalImgLabel();
+        frame.getGoalImgLabel().setIcon(image);
+        imageLabel.setSize(image.getIconWidth(), image.getIconHeight());
+
         ImageIcon generationStandard = new ImageIcon(gen.getHealthiest().getGenImage());
-        JLabel genLabel = new JLabel(generationStandard);
-        frame.add(genLabel);
-        frame.setLayout(null);
-        genLabel.setLocation(0, 0);
-        genLabel.setSize(1500, 750);
-        genLabel.setVisible(true);
+        JLabel genLabel = frame.getHealthiestImgLabel();
+        genLabel.setIcon(generationStandard);
+        genLabel.setSize(generationStandard.getIconWidth(), generationStandard.getIconHeight());
+        imageLabel.updateUI();
+        genLabel.updateUI();
+        
         Generation NextGen = new Generation (gen.getNextGeneration(),goalImg);
         startGenerations(frame,genLabel,NextGen);
-   
-        //gen.test();
-        //gen.getHealthiest();
-        
-        /*ImageGenerator gen0 = new ImageGenerator();
-        for(int i=1;i<=MAX_NUM_IMGS;i++){//Genera las primeras 1000 imagenes
-            gen0.generateImages(i,genCounter,goalImg.getWidth(),goalImg.getHeight());
-        }*/
-
-        //genCounter=genCounter++;
-       // test(goalImg);
-        /*while(similarityIndex<=90.0){
-            test();
-        }*/
  
     }
- 
-    public static void startGenerations (JFrame frame,JLabel genLabel,Generation gen){
-        long startTime = System.currentTimeMillis();
-        Individual currentBest;
+    
+    public static void setSimilarityGoal(){
+        switch(DistanceType){
+            case "MANHATTAN":
+                similarityGoal = 1000000;
+                break;
+            case "EUCLIDEAN":
+                similarityGoal= 20000; 
+                break;
+            default:
+                similarityGoal = 10000;
+                break;      
+        }
+    }
+    
+    
+    public static void startGenerations (mainFrame frame,JLabel genLabel,Generation gen){
+        Individual currentBest= gen.getHealthiest();
         int i=1;
-        while (gen.SimilarityIndex<=10000){
+        while (gen.SimilarityIndex<=similarityGoal){
             currentBest= gen.getHealthiest();
             currentBest.setName("Image"+String.valueOf((int)currentBest.calculateHealth(DistanceType)));
             ImageIcon generationStandard = new ImageIcon(currentBest.getGenImage());
 
-            genLabel.setIcon(generationStandard);
-            frame.add(genLabel);
-            frame.setLayout(null);
-            genLabel.setLocation(0, 0);
-            genLabel.setSize(1500, 750);
-            genLabel.setVisible(true);
-            genLabel.updateUI();
+            frame.getHealthiestImgLabel().setIcon(generationStandard);
+            frame.getSimilarityIndex().setText(String.valueOf(currentBest.health));
+            frame.getHealthiestImgLabel().updateUI();
             if(i%10==0){
-                VanGoghProject.toFile(currentBest.getGenImage(),currentBest.getName());
+                //VanGoghProject.toFile(currentBest.getGenImage(),currentBest.getName());
                 Generation NextGen = new Generation (gen.getNextGeneration(),goalImg);
                 i+=1;
             }else{
@@ -310,26 +299,12 @@ public static double EuclideanDistanceCalculator(double[] ImageA, double[] Image
 
         for(int i=0;i<colorsA.size()-1;i++) {
             gray = gray + Math.abs((Math.log(colorsA.get(i).get(0)))-(Math.log(colorsB.get(i).get(0))));
+            System.out.print("Gray: "+String.valueOf(gray));
         }
         Sum=Sum+gray;
+        //System.out.println("Sum:"+String.valueOf(Sum)+"Gray: "+String.valueOf(gray));
         return Sum;
     }
-   /* public static double euclidianDistance(BufferedImage ImageA, Color[] p)
-    {
-        ArrayList<ArrayList<Integer>> colorsA = getRGBComponents(ImageA);
-        ArrayList<ArrayList<Integer>> colorsB = getRGBFromColor(p);
-        double Sum=0;
-        double Red=0;
-        double Green=0;
-        double Blue=0;
-        for(int i=0;i<colorsA.size()-1;i++) {
-            Red = Red + Math.pow((colorsA.get(i).get(0)-colorsB.get(i).get(0)),2.0);
-            Green = Green + Math.pow((colorsA.get(i).get(1)-colorsB.get(i).get(1)),2.0);
-            Blue = Blue + Math.pow((colorsA.get(i).get(2)-colorsB.get(i).get(2)),2.0);
-        }
-        Sum=Sum+Red+Green+Blue;
-        return Math.sqrt(Sum);
-    }*/
     
     public static ArrayList<ArrayList<Integer>> getRGBFromColor(Color[] p){
         ArrayList<ArrayList<Integer>> colorsImage= new ArrayList();
