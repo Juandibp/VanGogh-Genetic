@@ -35,7 +35,7 @@ public class VanGoghProject {
     public static void main(String[] args){
         try {
             System.out.println("Searching in: "+resDirectory);
-            goalImg = ImageIO.read(new File(resDirectory+"downhillduck.bmp"));
+            goalImg = ImageIO.read(new File(resDirectory+"totoro.jpg"));
             //goalImg = ImageIO.read(new File(resDirectory+"NickCage.bmp"));
           
         } catch (IOException e) {
@@ -300,7 +300,7 @@ public static double EuclideanDistanceCalculator(double[] ImageA, double[] Image
         
     }
     
-    public static double BejaranoFengDistance (BufferedImage ImageA, BufferedImage ImageB){ //Uses GrayScale for Efficiency 
+   public static double BejaranoFengDistance (BufferedImage ImageA, BufferedImage ImageB){ //Uses GrayScale for Efficiency 
         BufferedImage targetGray = ImageToGrayscale(ImageA);
         BufferedImage genGray = ImageToGrayscale(ImageB);
         ArrayList<ArrayList<Integer>> colorsA = getRGBComponents(targetGray);
@@ -309,7 +309,16 @@ public static double EuclideanDistanceCalculator(double[] ImageA, double[] Image
         double gray=0;
 
         for(int i=0;i<colorsA.size()-1;i++) {
-            gray = gray + Math.abs((Math.log(colorsA.get(i).get(0)))-(Math.log(colorsB.get(i).get(0))));
+            gray = gray + Math.abs((((colorsA.get(i).get(0)))-((colorsB.get(i).get(0)))));
+        if (colorsA.get(i).get(0)!=0 && (colorsB.get(i).get(0))!=0){
+            gray=gray + Math.abs(((Math.log(colorsA.get(i).get(0)))-(Math.log(colorsB.get(i).get(0)))));
+        }
+        else{
+            if(Math.abs((((colorsA.get(i).get(0)))-((colorsB.get(i).get(0)))))==0){
+                gray=0;
+            }
+        }
+            gray=Math.log(gray);
         }
         Sum=Sum+gray;
         return Sum;
