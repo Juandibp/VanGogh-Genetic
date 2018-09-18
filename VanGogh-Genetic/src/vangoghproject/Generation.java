@@ -5,25 +5,17 @@
  */
 package vangoghproject;
 
-import Setup.EuclideanDistanceCalculator;
 import java.awt.image.BufferedImage;
-
 import java.io.File;
 import java.io.IOException;
-
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Random;
 import javafx.util.Pair;
 import javax.imageio.ImageIO;
 import static vangoghproject.VanGoghProject.euclidianDistance;
 import static vangoghproject.VanGoghProject.resDirectory;
 
-/**
- *
- * @author juand
- */
-public class Generation extends VanGoghProject{
+public class Generation {
     double SimilarityIndex;
     BufferedImage Target;
     int GenerationSize;
@@ -40,7 +32,6 @@ public class Generation extends VanGoghProject{
         this.Target = Goal;
         this.GenerationSize = newGen.size();
         this.Individuals= newGen;
-        //createGeneration();
     }
     
     public void createGeneration(){
@@ -73,7 +64,7 @@ public class Generation extends VanGoghProject{
         for(int i=0;i<=this.GenerationSize;i++){
             try {
                genImg =ImageIO.read(new File(resDirectory+"Image"+String.valueOf(i)+".bmp"));
-               Pair<String,Double> newEntry = new Pair<>("Image"+String.valueOf(i)+".bmp",euclidianDistance(goalImg,genImg));
+               Pair<String,Double> newEntry = new Pair<>("Image"+String.valueOf(i)+".bmp",euclidianDistance(VanGoghProject.goalImg,genImg));
                ranking.add(newEntry);
                 } catch (IOException e) {
             System.out.println("Imagen no existe");
@@ -123,16 +114,12 @@ public class Generation extends VanGoghProject{
             return null;
         }
     }
-
-    
     public ArrayList<Individual> getNextGeneration(){
         Individual best1;
         Individual best2;
         int bestIndex=getHealthiestIndex();
         best1=Individuals.get(bestIndex);
-        //Individual[] sub = Arrays.copyOfRange(Individuals,bestIndex,bestIndex+1);
         best2=Individuals.get(bestIndex);
-        //Individuals = new ArrayList<Individual>();
         this.Individuals.clear();
         Individuals.add(best1);
         Individuals.add(best2);
@@ -140,7 +127,7 @@ public class Generation extends VanGoghProject{
             Individual newIndividual = breed(best1,best2);
             Individuals.add(newIndividual);
             Individuals.get(i).mutate();
-            Individuals.get(i).calculateHealth(DistanceType);
+            Individuals.get(i).calculateHealth(VanGoghProject.DistanceType);
         }
         return Individuals;
     }

@@ -12,26 +12,95 @@ import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import Setup.ImageLoader;
 
 public class VanGoghProject {
-    public static int genCounter=0;
+    /*public static int genCounter=0;
     public static ArrayList<ArrayList<Integer>> targetColors;
     public static double similarityIndex=0;
-    public static int MAX_NUM_IMGS=15;
-    public static int GenerationSize=15;
+    public static int MAX_NUM_IMGS=10;
+    public static int GenerationSize=20;
     public static String fengDir="D:\\josep\\Documents\\GitRepos\\VanGogh-Genetic\\data\\";
     public static String juandiDir="C:\\Users\\juand\\Documents\\GitHub\\VanGogh-Genetic\\data\\";
     public static String resDirectory=fengDir;
-    //public static String DistanceType="BEJARANO-FENG";
-    //public static String DistanceType="EUCLIDEAN";
     public static String DistanceType="BEJARANO-FENG";
     public static double similarityGoal;
+    public static BufferedImage goalImg;*/
+    public static int genCounter=0;
+    public static ArrayList<ArrayList<Integer>> targetColors;
+    public static double similarityIndex=0;
+    public static int MAX_NUM_IMGS;
+    public static int GenerationSize;
+    public static String fengDir="D:\\josep\\Documents\\GitRepos\\VanGogh-Genetic\\data\\";
+    public static String juandiDir="C:\\Users\\juand\\Documents\\GitHub\\VanGogh-Genetic\\data\\";
+    public static String resDirectory=fengDir;
+    public static String DistanceType;
+    public static double similarityGoal;
     public static BufferedImage goalImg;
+    public static double probabilidadCruce;
+    public static double porcentajeGenes;
     
+    public VanGoghProject(int tamanoPoblacionP,double probabilidadCruceP,double porcentajeGenesP,String imagePathP,int distanceModeP){
+        GenerationSize=tamanoPoblacionP;
+        MAX_NUM_IMGS=tamanoPoblacionP;
+        probabilidadCruce = probabilidadCruceP;
+        porcentajeGenes = porcentajeGenesP;
+        getDistanceType(distanceModeP);
+        retrieveImage(imagePathP);
+    }
     
+    public void process(mainFrame window){
+        Generation gen= new Generation(MAX_NUM_IMGS, goalImg);
+        mainFrame frame = window;
+        ImageIcon image = new ImageIcon(goalImg);
+        JLabel imageLabel = frame.getGoalImgLabel();
+        frame.getGoalImgLabel().setIcon(image);
+        imageLabel.setSize(image.getIconWidth(), image.getIconHeight());
+
+        ImageIcon generationStandard = new ImageIcon(gen.getHealthiest().getGenImage());
+        JLabel genLabel = frame.getHealthiestImgLabel();
+        genLabel.setIcon(generationStandard);
+        genLabel.setSize(generationStandard.getIconWidth(), generationStandard.getIconHeight());
+        
+        imageLabel.updateUI();
+        genLabel.updateUI();
+        Generation NextGen = new Generation (gen.getNextGeneration(),goalImg);
+        startGenerations(frame,genLabel,NextGen);
+    }
+
+    public static BufferedImage getGoalImg() {
+        return goalImg;
+    }
     
-    public static void main(String[] args){
+    public void getDistanceType(int modeInt){
+        switch(modeInt){
+            case 0:
+                DistanceType ="EUCLIDEANA".toUpperCase();
+                break;
+            case 1:
+                DistanceType ="MANHATTAN".toUpperCase();
+                break;
+            case 2:
+                DistanceType ="BEJARANO-FENG".toUpperCase();
+                break;
+            default:
+                DistanceType = "No definido.";
+                break; 
+        }
+    }
+    
+    public void retrieveImage(String filename){
+        try {
+            System.out.println("Searching in: "+filename);
+            goalImg = ImageIO.read(new File(filename));
+            
+            setSimilarityGoal();
+        } catch (IOException e) {
+            System.out.println("Imagen no existe en :"+filename);
+            JOptionPane.showMessageDialog(null, "Oops! An error occurred");
+        }
+    }
+    
+    /*public static void main(String[] args){
         try {
             System.out.println("Searching in: "+resDirectory);
             goalImg = ImageIO.read(new File(resDirectory+"donald.bmp"));
@@ -58,24 +127,28 @@ public class VanGoghProject {
         
         Generation NextGen = new Generation (gen.getNextGeneration(),goalImg);
         startGenerations(frame,genLabel,NextGen);
- 
-    }
+    }*/
     
     public static void setSimilarityGoal(){
+        System.out.print("Mode: "+DistanceType);
         switch(DistanceType){
             case "MANHATTAN":
+                System.out.println("EUCLIDIANA");
                 similarityGoal = 1000000;
                 break;
             case "EUCLIDEAN":
+                System.out.println("MANHATTAN");
                 similarityGoal= 20000; 
                 break;
+            case "BEJARANO-FENG":
+                 System.out.println("BEJARANO-FENG");
+                similarityGoal=10000;
             default:
                 similarityGoal = 10000;
                 break;      
         }
     }
-    
-    
+   
     public static void startGenerations (mainFrame frame,JLabel genLabel,Generation gen){
         Individual currentBest= gen.getHealthiest();
         int i=1;
@@ -87,8 +160,9 @@ public class VanGoghProject {
             frame.getHealthiestImgLabel().setIcon(generationStandard);
             frame.getSimilarityIndex().setText(String.valueOf(currentBest.health));
             frame.getHealthiestImgLabel().updateUI();
+            System.out.println("Updating...");
             if(i%10==0){
-                //VanGoghProject.toFile(currentBest.getGenImage(),currentBest.getName());
+                VanGoghProject.toFile(currentBest.getGenImage(),currentBest.getName());
                 Generation NextGen = new Generation (gen.getNextGeneration(),goalImg);
                 i+=1;
             }else{
@@ -96,41 +170,6 @@ public class VanGoghProject {
                 i+=1;
             }
         }
-    }
-public static void test(BufferedImage goalImg){
-        int value=0;
- 
-        /* JFrame frame = new JFrame();
-         ImageIcon image = new ImageIcon(goalImg);
-         JLabel imageLabel = new JLabel(image);
-         frame.add(imageLabel);
-         frame.setLayout(null);
-         imageLabel.setLocation(0, 0);
-         imageLabel.setSize(1000, 750);
-         imageLabel.setVisible(true);
-         frame.setVisible(true);
-         frame.setSize(1000, 750);
-         frame.setDefaultCloseOperation(EXIT_ON_CLOSE);*/
-
-        ImageLoader finalImg = new ImageLoader(goalImg);
-        //Arraylist de pares donde se van a guardar pares de String para el nombre de la imagen y un double donde va a estar la distancia Euclideana
-        ArrayList<Pair<String,Double>> ranking = new ArrayList<Pair<String,Double>>();
-
-        for(int i =1;i<=MAX_NUM_IMGS;i++){
-            ImageLoader chosenImg = new ImageLoader(resDirectory+"Image"+i+"Gen0.bmp");
-            BufferedImage genImg = null;
-            try {
-                genImg = ImageIO.read(new File(resDirectory+"Image"+i+"Gen0.bmp"));
-
-                Pair<String,Double> newEntry = new Pair<>("Image"+String.valueOf(i)+"Gen0.bmp",euclidianDistance(goalImg,genImg));
-                ranking.add(newEntry);
-                } catch (IOException e) {
-            System.out.println("Imagen no existe");
-                }
-            //System.out.println("Testing goal image with "+"Image"+i);
-        }
-        verRanking(ranking);
-
     }
 
 public static void verRanking(ArrayList<Pair<String,Double>> ranking){
@@ -298,11 +337,9 @@ public static double EuclideanDistanceCalculator(double[] ImageA, double[] Image
         double gray=0;
 
         for(int i=0;i<colorsA.size()-1;i++) {
-            gray = gray + Math.abs((Math.log(colorsA.get(i).get(0)))-(Math.log(colorsB.get(i).get(0))));
-            System.out.print("Gray: "+String.valueOf(gray));
+            gray = gray + Math.abs(Math.log(((colorsA.get(i).get(0)))-((colorsB.get(i).get(0)))));
         }
         Sum=Sum+gray;
-        //System.out.println("Sum:"+String.valueOf(Sum)+"Gray: "+String.valueOf(gray));
         return Sum;
     }
     
@@ -364,4 +401,5 @@ public static double EuclideanDistanceCalculator(double[] ImageA, double[] Image
             JOptionPane.showMessageDialog(null, "Oops! An error occurred"); 
         }
     }   
+    
 }

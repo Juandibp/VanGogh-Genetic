@@ -10,6 +10,7 @@ import vangoghproject.*;
 
 import java.awt.Panel;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 /**
@@ -227,38 +228,43 @@ public class mainFrame extends javax.swing.JFrame {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
-      /* if(this.cruceText.getText()==""||this.)
-       VanGoghProject.GenerationSize=*/
+        String cruceGot,poblacionGot,mutationGot,pathGot;
+        cruceGot=this.cruceText.getText();
+        poblacionGot=this.tamanoPoblacionText.getText();
+        mutationGot=this.mutateQuantityText.getText();
+        pathGot=this.pathText.getText();
+        int distanceMode = this.optionsComboBox.getSelectedIndex();
+        if(cruceGot.equals("")||poblacionGot.equals("")||mutationGot.equals("") || pathGot.equals("")){
+            JOptionPane.showMessageDialog(null, "Hay campos vacios!");
+        }else if(Integer.parseInt(mutationGot)>100 || Integer.parseInt(mutationGot)<=0 || Integer.parseInt(cruceGot)>100 ||Integer.parseInt(cruceGot)<=0 || Integer.parseInt(poblacionGot)<=0){
+            JOptionPane.showMessageDialog(null, "Hay valores invalidos!");
+        }else{
+            Control ctrlInstance = new Control(Integer.parseInt(poblacionGot),Double.parseDouble(cruceGot)/100,Double.parseDouble(mutationGot)/100,pathGot,distanceMode,this);
+        }
     }//GEN-LAST:event_jButton1ActionPerformed
-
+    /*
+   String cruceGot,poblacionGot,mutationGot,pathGot;
+        cruceGot=this.cruceText.getText();
+        poblacionGot=this.tamanoPoblacionText.getText();
+        mutationGot=this.mutateQuantityText.getText();
+        pathGot=this.pathText.getText();
+        System.out.println(Integer.parseInt(mutationGot));
+        int distanceMode = this.optionsComboBox.getSelectedIndex();
+        if(cruceGot.equals("")||poblacionGot.equals("")||mutationGot.equals("") || pathGot.equals("")){
+            JOptionPane.showMessageDialog(null, "Hay campos vacios!");
+        }else if(Integer.parseInt(mutationGot)>100 || Integer.parseInt(mutationGot)<=0 || Integer.parseInt(cruceGot)>100 ||Integer.parseInt(cruceGot)<=0 || Integer.parseInt(poblacionGot)<=0){
+            JOptionPane.showMessageDialog(null, "Hay valores invalidos!");
+            System.exit(0);
+        }else{
+            //Control ctrlInstance = new Control(Integer.getInteger(poblacionGot),Double.parseDouble(cruceGot)/100,Double.parseDouble(mutationGot)/100,pathGot,distanceMode,this);
+            System.out.println("Creado");
+        }
+    */
     /**
      * @param args the command line arguments
      */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(mainFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(mainFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(mainFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(mainFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-
-        /* Create and display the form */
+   public static void main(String args[]) {
+       
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new mainFrame();
