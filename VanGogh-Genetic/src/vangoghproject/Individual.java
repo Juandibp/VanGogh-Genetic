@@ -25,7 +25,7 @@ public class Individual{
         this.width= Target.getWidth();
 
         this.p = generateImage();
-        this.health=0;
+        this.health=calculateHealth(VanGoghProject.DistanceType);
     }
 
     public BufferedImage getTarget() {
@@ -70,8 +70,8 @@ public BufferedImage getGenImage() {
     public void mutate(){
         Random randint = new Random(System.currentTimeMillis());
         
-        Double tries = max*VanGoghProject.porcentajeGenes;
-        System.out.println("Tries: "+String.valueOf(max));
+        Double tries = ((max*VanGoghProject.porcentajeGenes)%25)+5;
+        
         while(tries >= 0){
             int x= randint.nextInt(this.width);
             int y = randint.nextInt(this.height);
@@ -87,23 +87,26 @@ public BufferedImage getGenImage() {
     }
 
     public double calculateHealth(String Distance){
-        
-        if (Distance=="EUCLIDEAN"){
+        if (Distance.equals("EUCLIDEAN")){
             
             this.health = VanGoghProject.euclidianDistance(Target,p);
+            //System.out.println("Current is:"+String.valueOf(this.health));
             return health;
         }
-        if (Distance=="MANHATTAN"){
+        if (Distance.equals("MANHATTAN")){
              
             this.health = VanGoghProject.manhattanDistance(Target,p);
+            //System.out.println("Current is:"+String.valueOf(this.health));            
             return health;
         }
-        if (Distance=="BEJARANO-FENG"){
+        if (Distance.equals("BEJARANO-FENG")){
             
             this.health = VanGoghProject.BejaranoFengDistance(Target,p);
+            //System.out.println("Current is:"+String.valueOf(this.health));
             return health;
+        }else{
+            return 0;
         }
-        
-        return health;
     }
 }
+

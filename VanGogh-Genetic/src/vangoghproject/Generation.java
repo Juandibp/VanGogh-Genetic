@@ -55,11 +55,12 @@ public class Generation {
                 healthiest=Individuals.get(i);
             }
         }
+        //System.out.println("Healthiest has a score of: "+String.valueOf(healthiest.health));
         return healthiest;
     }
     public ArrayList<Pair<String,Double>> rank(){
         //Arraylist de pares donde se van a guardar pares de String para el nombre de la imagen y un double donde va a estar la distancia Euclideana
-        ArrayList<Pair<String,Double>> ranking = new ArrayList<Pair<String,Double>>();
+        ArrayList<Pair<String,Double>> ranking = new ArrayList<>();
         BufferedImage genImg = null;
         for(int i=0;i<=this.GenerationSize;i++){
             try {

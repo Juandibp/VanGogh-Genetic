@@ -4,22 +4,31 @@
  * and open the template in the editor.
  */
 package vangoghproject;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.swing.JOptionPane;
-import vangoghproject.*;
 /**
  *
  * @author josep
  */
 public class Control {
-    public Control(int tamanoPoblacionP,double probabilidadCruceP,double porcentajeGenesP,String imagePathP,int distanceMode,mainFrame window){
+    public Control(int tamanoPoblacionP,double probabilidadCruceP,double porcentajeGenesP,String imagePathP,int distanceMode,int cantGensP){
         
-        VanGoghProject instance = new VanGoghProject(tamanoPoblacionP,probabilidadCruceP,porcentajeGenesP,imagePathP,distanceMode);
+        VanGoghProject instance = new VanGoghProject(tamanoPoblacionP,probabilidadCruceP,porcentajeGenesP,imagePathP,distanceMode,cantGensP);
         if(instance.getGoalImg()==null){
-             JOptionPane.showMessageDialog(null, "Oops! An error occurred");
+            System.out.print("No se encuentra la imagen.");
         }else{
-            instance.process(window);
+            instance.process();
+           /* Thread revisarCorreos = new Thread(new Runnable() {
+
+			@Override
+			public void run() {
+				
+				while(true) {
+                                    instance.process();
+                                    break;
+				}
+			}
+		});*/
+            
+            
         }
     }
 }

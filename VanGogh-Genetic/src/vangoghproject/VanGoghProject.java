@@ -1,6 +1,5 @@
 package vangoghproject;
 
-import Setup.*;
 import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -11,8 +10,6 @@ import java.util.Comparator;
 import javafx.util.Pair;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
-import javax.swing.JFrame;
-import static javax.swing.JFrame.EXIT_ON_CLOSE;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 
@@ -24,14 +21,14 @@ public class VanGoghProject {
     public static int GenerationSize=20;
     public static String fengDir="D:\\josep\\Documents\\GitRepos\\VanGogh-Genetic\\data\\";
     public static String juandiDir="C:\\Users\\juand\\Documents\\GitHub\\VanGogh-Genetic\\data\\";
-<<<<<<< HEAD
     public static String resDirectory=fengDir;
     public static String DistanceType="BEJARANO-FENG";
     public static double similarityGoal;
     public static BufferedImage goalImg;*/
+    
     public static int genCounter=0;
     public static ArrayList<ArrayList<Integer>> targetColors;
-    public static double similarityIndex=0;
+    public static double similarityIndex;
     public static int MAX_NUM_IMGS;
     public static int GenerationSize;
     public static String fengDir="D:\\josep\\Documents\\GitRepos\\VanGogh-Genetic\\data\\";
@@ -42,51 +39,63 @@ public class VanGoghProject {
     public static BufferedImage goalImg;
     public static double probabilidadCruce;
     public static double porcentajeGenes;
-    
-    public VanGoghProject(int tamanoPoblacionP,double probabilidadCruceP,double porcentajeGenesP,String imagePathP,int distanceModeP){
+    public static int cantGenerations;
+    public static int i=1;
+    public VanGoghProject(int tamanoPoblacionP,double probabilidadCruceP,double porcentajeGenesP,String imagePathP,int distanceModeP,int cantGens){
         GenerationSize=tamanoPoblacionP;
         MAX_NUM_IMGS=tamanoPoblacionP;
         probabilidadCruce = probabilidadCruceP;
         porcentajeGenes = porcentajeGenesP;
         getDistanceType(distanceModeP);
         retrieveImage(imagePathP);
+        cantGenerations = cantGens;
+        System.out.println("All attributes set!");
+        
     }
     
-    public void process(mainFrame window){
+    public void process(){
         Generation gen= new Generation(MAX_NUM_IMGS, goalImg);
-        mainFrame frame = window;
+        mainFrame frame = new mainFrame();
         ImageIcon image = new ImageIcon(goalImg);
-        JLabel imageLabel = frame.getGoalImgLabel();
-        frame.getGoalImgLabel().setIcon(image);
-        imageLabel.setSize(image.getIconWidth(), image.getIconHeight());
-
+        JLabel imageLabel = new JLabel(image);
+        frame.add(imageLabel);
+        frame.setLayout(null);
+        imageLabel.setLocation(0, 0);
+        imageLabel.setSize(500, 750);
+        imageLabel.setVisible(true);
+        frame.setSize(1000, 750);
+        frame.setDefaultCloseOperation(frame.EXIT_ON_CLOSE);
         ImageIcon generationStandard = new ImageIcon(gen.getHealthiest().getGenImage());
-        JLabel genLabel = frame.getHealthiestImgLabel();
-        genLabel.setIcon(generationStandard);
-        genLabel.setSize(generationStandard.getIconWidth(), generationStandard.getIconHeight());
-        
-        imageLabel.updateUI();
-        genLabel.updateUI();
+        System.out.println("Similarity goal: "+ String.valueOf(similarityGoal));
+        JLabel genLabel = new JLabel(generationStandard);
+        frame.setLayout(null);
+        genLabel.setVisible(true);
+        frame.getSimilarityIndex().setText(String.valueOf(gen.getHealthiest().health));
         Generation NextGen = new Generation (gen.getNextGeneration(),goalImg);
+        Thread revisarCorreos = new Thread(new Runnable() {
+
+			@Override
+			public void run() {
+				
+				while(true) {
+                                    frame.getHealthiestImgLabel().updateUI();
+                                    frame.getSimilarityIndex().updateUI();
+                                    break;
+				}
+			}
+                        
+		});
         startGenerations(frame,genLabel,NextGen);
     }
-
+   
     public static BufferedImage getGoalImg() {
         return goalImg;
     }
-=======
-    public static String resDirectory=juandiDir;
-    public static String DistanceType="BEJARANO-FENG";
-    //public static String DistanceType="EUCLIDEAN";
-    //public static String DistanceType="MANHATTAN";
     
-    public static BufferedImage goalImg;
->>>>>>> parent of f851ca7... Updated GUI, lacks functionalities, need to see how to connect both classes
-    
-    public void getDistanceType(int modeInt){
+    public static void getDistanceType(int modeInt){
         switch(modeInt){
             case 0:
-                DistanceType ="EUCLIDEANA".toUpperCase();
+                DistanceType ="EUCLIDEAN".toUpperCase();
                 break;
             case 1:
                 DistanceType ="MANHATTAN".toUpperCase();
@@ -100,19 +109,18 @@ public class VanGoghProject {
         }
     }
     
-    public void retrieveImage(String filename){
+    public static void retrieveImage(String filename){
         try {
             System.out.println("Searching in: "+filename);
             goalImg = ImageIO.read(new File(filename));
-            
             setSimilarityGoal();
         } catch (IOException e) {
             System.out.println("Imagen no existe en :"+filename);
-            JOptionPane.showMessageDialog(null, "Oops! An error occurred");
+            JOptionPane.showMessageDialog(null, "Imagen no encontrada.");
         }
     }
     
-    /*public static void main(String[] args){
+   /* public static void main(String[] args){
         try {
             System.out.println("Searching in: "+resDirectory);
             goalImg = ImageIO.read(new File(resDirectory+"downhillduck.bmp"));
@@ -120,12 +128,10 @@ public class VanGoghProject {
           
         } catch (IOException e) {
             System.out.println("Imagen no existe");
-            
         }
         Generation gen= new Generation(MAX_NUM_IMGS, goalImg);
-        //gen.getStrongest();
          
-        JFrame frame = new JFrame();
+        mainFrame frame = new mainFrame();
         ImageIcon image = new ImageIcon(goalImg);
         JLabel imageLabel = new JLabel(image);
         frame.add(imageLabel);
@@ -145,82 +151,67 @@ public class VanGoghProject {
         genLabel.setVisible(true);
         Generation NextGen = new Generation (gen.getNextGeneration(),goalImg);
         startGenerations(frame,genLabel,NextGen);
-<<<<<<< HEAD
     }*/
     
     public static void setSimilarityGoal(){
-        System.out.print("Mode: "+DistanceType);
+        //System.out.print("Mode: "+DistanceType);
         switch(DistanceType){
             case "MANHATTAN":
-                System.out.println("EUCLIDIANA");
+                System.out.println("EUCLIDEAN");
                 similarityGoal = 1000000;
                 break;
             case "EUCLIDEAN":
                 System.out.println("MANHATTAN");
-                similarityGoal= 20000; 
+                similarityGoal= 100000; 
                 break;
             case "BEJARANO-FENG":
                  System.out.println("BEJARANO-FENG");
-                similarityGoal=10000;
+                similarityGoal=5;
             default:
                 similarityGoal = 10000;
                 break;      
         }
     }
-   
+ 
     public static void startGenerations (mainFrame frame,JLabel genLabel,Generation gen){
-        Individual currentBest= gen.getHealthiest();
-=======
-   
-        //gen.test();
-        //gen.getHealthiest();
-        
-        /*ImageGenerator gen0 = new ImageGenerator();
-        for(int i=1;i<=MAX_NUM_IMGS;i++){//Genera las primeras 1000 imagenes
-            gen0.generateImages(i,genCounter,goalImg.getWidth(),goalImg.getHeight());
-        }*/
-
-        //genCounter=genCounter++;
-       // test(goalImg);
-        /*while(similarityIndex<=90.0){
-            test();
-        }*/
- 
-    }
- 
-    public static void startGenerations (JFrame frame,JLabel genLabel,Generation gen){
-        long startTime = System.currentTimeMillis();
         Individual currentBest;
->>>>>>> parent of f851ca7... Updated GUI, lacks functionalities, need to see how to connect both classes
-        int i=1;
-        while (gen.SimilarityIndex<=10000){
+        frame.setDefaultCloseOperation(frame.EXIT_ON_CLOSE);
+        System.out.println("Mode:"+DistanceType);
+        while (cantGenerations !=0){
+            //System.out.println("SimilarityIndex ="+String.valueOf(similarityIndex)+" i = "+String.valueOf(i));
+            System.out.println("Generation: "+ String.valueOf(cantGenerations));
             currentBest= gen.getHealthiest();
-            currentBest.setName("Image"+String.valueOf((int)currentBest.calculateHealth(DistanceType)));
+            int health = (int)currentBest.calculateHealth(DistanceType);
+            currentBest.setName("Image"+String.valueOf(health));
             ImageIcon generationStandard = new ImageIcon(currentBest.getGenImage());
 
-<<<<<<< HEAD
             frame.getHealthiestImgLabel().setIcon(generationStandard);
+            
             frame.getSimilarityIndex().setText(String.valueOf(currentBest.health));
+            similarityIndex =health;
             frame.getHealthiestImgLabel().updateUI();
-            System.out.println("Updating...");
-=======
+
+
             genLabel.setIcon(generationStandard);
             frame.add(genLabel);
             frame.setLayout(null);
-            genLabel.setLocation(0, 0);
-            genLabel.setSize(1500, 750);
+
             genLabel.setVisible(true);
-            genLabel.updateUI();
->>>>>>> parent of f851ca7... Updated GUI, lacks functionalities, need to see how to connect both classes
+            genLabel.updateUI();    
             if(i%10==0){
-                VanGoghProject.toFile(currentBest.getGenImage(),currentBest.getName());
+                VanGoghProject.toFile(currentBest.getGenImage(),currentBest.getName()+"-"+String.valueOf(i));
                 Generation NextGen = new Generation (gen.getNextGeneration(),goalImg);
                 i+=1;
+                cantGenerations-=1;
             }else{
                 Generation NextGen = new Generation (gen.getNextGeneration(),goalImg);
                 i+=1;
+                cantGenerations-=1;
             }
         }
+       
+        frame.setVisible(true);
+        genLabel.updateUI();
     }
 
 public static void verRanking(ArrayList<Pair<String,Double>> ranking){
@@ -236,7 +227,7 @@ public static void verRanking(ArrayList<Pair<String,Double>> ranking){
                 }
            }
         });
-        System.out.println(ranking.toString().replace(',',Character.valueOf('\n')));
+        System.out.println(ranking.toString().replace(',', '\n'));
     }
 
 public static ArrayList<Pair<String,Double>> sortRanking(ArrayList<Pair<String,Double>> ranking){
@@ -252,7 +243,7 @@ public static ArrayList<Pair<String,Double>> sortRanking(ArrayList<Pair<String,D
                 }
            }
         });
-        System.out.println(ranking.toString().replace(',',Character.valueOf('\n')));
+        System.out.println(ranking.toString().replace(',', '\n'));
         return ranking;
     }
 
@@ -331,7 +322,7 @@ public static double EuclideanDistanceCalculator(double[] ImageA, double[] Image
     
     public static ArrayList<Color> getColorsArray(BufferedImage buffedImg){ 
 
-        ArrayList<Color> colors = new ArrayList<Color>();
+        ArrayList<Color> colors = new ArrayList<>();
         for(int x=0;x<buffedImg.getWidth();x++){  //Dura n
             for(int y=0;y<buffedImg.getHeight();y++){  //Dura n
                //Brings out RGB int value 
@@ -388,31 +379,17 @@ public static double EuclideanDistanceCalculator(double[] ImageA, double[] Image
         double gray=0;
 
         for(int i=0;i<colorsA.size()-1;i++) {
-<<<<<<< HEAD
-            gray = gray + Math.abs(Math.log(((colorsA.get(i).get(0)))-((colorsB.get(i).get(0)))));
-=======
-            gray = gray + Math.abs((Math.log(colorsA.get(i).get(0)))-(Math.log(colorsB.get(i).get(0))));
->>>>>>> parent of f851ca7... Updated GUI, lacks functionalities, need to see how to connect both classes
+            gray = gray + Math.abs((((colorsA.get(i).get(0)))-((colorsB.get(i).get(0)))));
+        }
+        if (gray==0){
+            gray=0;
+        }
+        else{
+            gray=Math.log(gray);
         }
         Sum=Sum+gray;
         return Sum;
     }
-   /* public static double euclidianDistance(BufferedImage ImageA, Color[] p)
-    {
-        ArrayList<ArrayList<Integer>> colorsA = getRGBComponents(ImageA);
-        ArrayList<ArrayList<Integer>> colorsB = getRGBFromColor(p);
-        double Sum=0;
-        double Red=0;
-        double Green=0;
-        double Blue=0;
-        for(int i=0;i<colorsA.size()-1;i++) {
-            Red = Red + Math.pow((colorsA.get(i).get(0)-colorsB.get(i).get(0)),2.0);
-            Green = Green + Math.pow((colorsA.get(i).get(1)-colorsB.get(i).get(1)),2.0);
-            Blue = Blue + Math.pow((colorsA.get(i).get(2)-colorsB.get(i).get(2)),2.0);
-        }
-        Sum=Sum+Red+Green+Blue;
-        return Math.sqrt(Sum);
-    }*/
     
     public static ArrayList<ArrayList<Integer>> getRGBFromColor(Color[] p){
         ArrayList<ArrayList<Integer>> colorsImage= new ArrayList();
