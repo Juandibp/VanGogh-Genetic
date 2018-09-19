@@ -413,12 +413,16 @@ public static double EuclideanDistanceCalculator(double[] ImageA, double[] Image
 
         for(int i=0;i<colorsA.size()-1;i++) {
             gray = gray + Math.abs((((colorsA.get(i).get(0)))-((colorsB.get(i).get(0)))));
-        }
-        if (gray==0){
-            gray=0;
+        if (colorsA.get(i).get(0)!=0 && (colorsB.get(i).get(0))!=0){
+            gray=gray + Math.abs(((Math.log(colorsA.get(i).get(0)))-(Math.log(colorsB.get(i).get(0)))));
         }
         else{
-            gray=Math.log(gray);
+            if(Math.abs((((colorsA.get(i).get(0)))-((colorsB.get(i).get(0)))))==0){
+                gray=0;
+            }
+            else {gray=Math.log(gray);}
+        }
+            
         }
         Sum=Sum+gray;
         return Sum;
