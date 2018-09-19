@@ -1,6 +1,8 @@
 package vangoghproject;
 
 import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -13,6 +15,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 
+
 public class VanGoghProject {
     /*public static int genCounter=0;
     public static ArrayList<ArrayList<Integer>> targetColors;
@@ -24,7 +27,8 @@ public class VanGoghProject {
     public static String resDirectory=fengDir;
     public static String DistanceType="BEJARANO-FENG";
     public static double similarityGoal;
-    public static BufferedImage goalImg;*/
+    public static BufferedImage goalImg;
+    public static String juandiDir="C:\\Users\\juand\\Documents\\GitHub\\VanGogh-Genetic\\data\\downhillduck.jpg";*/
     
     public static int genCounter=0;
     public static ArrayList<ArrayList<Integer>> targetColors;
@@ -33,7 +37,7 @@ public class VanGoghProject {
     public static int GenerationSize;
     public static String fengDir="D:\\josep\\Documents\\GitRepos\\VanGogh-Genetic\\data\\";
     public static String juandiDir="C:\\Users\\juand\\Documents\\GitHub\\VanGogh-Genetic\\data\\";
-    public static String resDirectory=fengDir;
+    public static String resDirectory=juandiDir;
     public static String DistanceType;
     public static double similarityGoal;
     public static BufferedImage goalImg;
@@ -53,7 +57,7 @@ public class VanGoghProject {
         
     }
     
-    public void process(){
+    public void process() throws IOException{
         Generation gen= new Generation(MAX_NUM_IMGS, goalImg);
         mainFrame frame = new mainFrame();
         ImageIcon image = new ImageIcon(goalImg);
@@ -70,6 +74,7 @@ public class VanGoghProject {
         JLabel genLabel = new JLabel(generationStandard);
         frame.setLayout(null);
         genLabel.setVisible(true);
+        frame.add(genLabel);
         frame.getSimilarityIndex().setText(String.valueOf(gen.getHealthiest().health));
         Generation NextGen = new Generation (gen.getNextGeneration(),goalImg);
         Thread revisarCorreos = new Thread(new Runnable() {
@@ -85,6 +90,7 @@ public class VanGoghProject {
 			}
                         
 		});
+        
         startGenerations(frame,genLabel,NextGen);
     }
    
@@ -173,11 +179,15 @@ public class VanGoghProject {
         }
     }
  
-    public static void startGenerations (mainFrame frame,JLabel genLabel,Generation gen){
+    public static void startGenerations (mainFrame frame,JLabel genLabel,Generation gen) throws IOException{
+        ArrayList<BufferedImage> representatives = new ArrayList();
+        int percentile =cantGenerations/10;
+        int picAmount=0;
         Individual currentBest;
         frame.setDefaultCloseOperation(frame.EXIT_ON_CLOSE);
         System.out.println("Mode:"+DistanceType);
         while (cantGenerations !=0){
+            
             //System.out.println("SimilarityIndex ="+String.valueOf(similarityIndex)+" i = "+String.valueOf(i));
             System.out.println("Generation: "+ String.valueOf(cantGenerations));
             currentBest= gen.getHealthiest();
@@ -197,9 +207,12 @@ public class VanGoghProject {
             frame.setLayout(null);
 
             genLabel.setVisible(true);
+
             genLabel.updateUI();    
-            if(i%10==0){
+            if(i%percentile==0){
                 VanGoghProject.toFile(currentBest.getGenImage(),currentBest.getName()+"-"+String.valueOf(i));
+                representatives.add(currentBest.getGenImage());
+                picAmount+=1;
                 Generation NextGen = new Generation (gen.getNextGeneration(),goalImg);
                 i+=1;
                 cantGenerations-=1;
@@ -208,12 +221,32 @@ public class VanGoghProject {
                 i+=1;
                 cantGenerations-=1;
             }
+            
         }
-       
-        frame.setVisible(true);
+        
+        
+       frame.setVisible(true);
         genLabel.updateUI();
+        representatives(picAmount,representatives);
+            
+        
     }
-
+    
+    public static void representatives(int picAmount,ArrayList<BufferedImage> images) throws IOException{
+        int heightTotal = 0;
+        for(int j = 0; j < images.size(); j++) {
+            heightTotal += images.get(j).getHeight();
+        }
+        int heightCurr = 0;
+        BufferedImage concatImage = new BufferedImage(goalImg.getWidth(), heightTotal, BufferedImage.TYPE_INT_RGB);
+        Graphics2D g2d = concatImage.createGraphics();
+        for(int j = 0; j < images.size(); j++) {
+            g2d.drawImage(images.get(j), 0, heightCurr, null);
+            heightCurr += images.get(j).getHeight();
+        }
+        g2d.dispose();
+        ImageIO.write(concatImage, "jpg", new File(resDirectory +"concat.png")); 
+    }
 public static void verRanking(ArrayList<Pair<String,Double>> ranking){
         Collections.sort(ranking,new Comparator<Pair<String,Double>>(){
            @Override
